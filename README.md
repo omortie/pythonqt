@@ -26,3 +26,6 @@ The generated wrappers are pre-generated and checked-in, so you only
 need to build and run the generator when you want to build additional wrappers
 or you want to upgrade/downgrade to another Qt version, but this requires
 updating the typesystems as well.
+
+## Fork Agenda
+I forked the original project to add sophisticated CMake build system files to the project. so it can be built on any IDE
