@@ -38,7 +38,7 @@ macx {
   }
 
   win32:INCLUDEPATH += $${PYTHON_PATH}/PC $${PYTHON_PATH}/include
-  win32:LIBS += $${PYTHON_LIB}/python$${PYTHON_VERSION}$${DEBUG_EXT}.lib
+  win32:LIBS += $${PYTHON_LIB}/python$${PYTHON_VERSION}.lib
 } else:unix {
   # on linux, python-config is used to autodetect Python.
   # make sure that you have installed a matching python-dev package.
