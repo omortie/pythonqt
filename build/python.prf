@@ -4,8 +4,8 @@
 # Change this variable to your python version (2.6, 2.7, 3.3, ...)
 PYTHON_VERSION=$$(PYTHON_VERSION)
 isEmpty( PYTHON_VERSION ) {
-  win32:PYTHON_VERSION=27
-  unix:PYTHON_VERSION=2.7
+  win32:PYTHON_VERSION=37
+  unix:PYTHON_VERSION=3.7
 }
 
 
@@ -23,6 +23,8 @@ macx {
   # When using the prebuild Python installer, this will be:
   # set PYTHON_PATH = c:\Python26
   # set PYTHON_LIB  = c:\Python26\libs
+  PYTHON_PATH = "C:\Program Files\Python"
+  PYTHON_LIB  = "C:\Program Files\Python\libs"
   #
   # When using the python sources, this will be something like:
   # set PYTHON_PATH = c:\yourDir\Python-2.6.1\
@@ -35,8 +37,8 @@ macx {
     DEBUG_EXT = 
   }
 
-  win32:INCLUDEPATH += $$(PYTHON_PATH)/PC $$(PYTHON_PATH)/include
-  win32:LIBS += $$(PYTHON_LIB)/python$${PYTHON_VERSION}$${DEBUG_EXT}.lib
+  win32:INCLUDEPATH += $${PYTHON_PATH}/PC $${PYTHON_PATH}/include
+  win32:LIBS += $${PYTHON_LIB}/python$${PYTHON_VERSION}$${DEBUG_EXT}.lib
 } else:unix {
   # on linux, python-config is used to autodetect Python.
   # make sure that you have installed a matching python-dev package.
