@@ -2,6 +2,7 @@
 # NOTE: The CMake files have been contributed to PythonQt
 #
 # If you are not a CMake expert, you should better use the provided qmake profiles.
+# Author : Morteza Sherafati (Mortie)
 #-----------------------------------------------------------------------------
 
 cmake_minimum_required(VERSION 3.8)
