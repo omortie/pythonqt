@@ -41,7 +41,8 @@ set(SRCS
 		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtClassWrapper.cpp
 		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtBoolResult.cpp
 		${CMAKE_CURRENT_SOURCE_DIR}/gui/PythonQtScriptingConsole.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtStdDecorators.cpp)
+                ${CMAKE_CURRENT_SOURCE_DIR}/PythonQtStdDecorators.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/PythonQtThreadSupport.cpp)
 
 set(HDRS
 		${CMAKE_CURRENT_SOURCE_DIR}/PythonQt.h
@@ -69,7 +70,8 @@ set(HDRS
 		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtUtils.h
 		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtBoolResult.h
 		${CMAKE_CURRENT_SOURCE_DIR}/gui/PythonQtScriptingConsole.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtStdDecorators.h)
+                ${CMAKE_CURRENT_SOURCE_DIR}/PythonQtStdDecorators.h
+                ${CMAKE_CURRENT_SOURCE_DIR}/PythonQtThreadSupport.h)
 
 # -------------------------------------Script Debugger----------------
 #set(ScriptDebugger_SRCS gui/scriptdebugger/src/codeeditor.cpp
