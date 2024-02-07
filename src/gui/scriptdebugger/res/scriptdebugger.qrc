@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/scriptdebugger/copy.png</file>
+        <file>icons/scriptdebugger/cut.png</file>
+        <file>icons/scriptdebugger/new.png</file>
+        <file>icons/scriptdebugger/open.png</file>
+        <file>icons/scriptdebugger/paste.png</file>
+        <file>icons/scriptdebugger/save.png</file>
+        <file>icons/scriptdebugger/debug.png</file>
+        <file>icons/scriptdebugger/run.png</file>
+        <file>icons/scriptdebugger/stepover.png</file>
+        <file>icons/scriptdebugger/clear.png</file>
+        <file>scripts/scriptdebugger/debugger.py</file>
+        <file>icons/scriptdebugger/zoomi_32.png</file>
+        <file>icons/scriptdebugger/zoomo_32.png</file>
+        <file>icons/scriptdebugger/debugger_continue.png</file>
+        <file>icons/scriptdebugger/debugger_stop.png</file>
+        <file>icons/scriptdebugger/stepinto.png</file>
+        <file>icons/scriptdebugger/breakpoint.png</file>
+        <file>icons/scriptdebugger/forwd_32.png</file>
+        <file>icons/scriptdebugger/profiler.png</file>
+    </qresource>
+</RCC>
