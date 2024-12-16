@@ -123,13 +123,13 @@ void ShellImplGenerator::write(QTextStream &s, const AbstractMetaClass *meta_cla
 
     AbstractMetaFunctionList virtualsForShell = getVirtualFunctionsForShell(meta_class);
     foreach (const AbstractMetaFunction *fun, virtualsForShell) {
-      bool hasReturnValue = (fun->type());
+      bool hasReturnValue = !fun->type().isNull();
       writeFunctionSignature(s, fun, meta_class, QString(),
-        Option(OriginalName | ShowStatic | UnderscoreSpaces | UseIndexedName),
+        Option(ShowStatic | UnderscoreSpaces | UseIndexedName),
         "PythonQtShell_");
       s << endl << "{" << endl;
 
-      Option typeOptions = Option(OriginalName | UnderscoreSpaces | SkipName);
+      Option typeOptions = Option(UnderscoreSpaces | SkipName);
       AbstractMetaArgumentList args = fun->arguments();
 
       // we can't handle return values which are references right now, do not send those to Python...
@@ -239,7 +239,7 @@ void ShellImplGenerator::write(QTextStream &s, const AbstractMetaClass *meta_cla
 
       s << meta_class->qualifiedCppName() << "* ";
       s << "PythonQtWrapper_" << meta_class->name() << "::";
-      writeFunctionSignature(s, ctor, 0, "new_", Option(AddOwnershipTemplates | OriginalName | ShowStatic));
+      writeFunctionSignature(s, ctor, 0, "new_", Option(AddOwnershipTemplates | ShowStatic));
       s << endl;
       s << "{ " << endl;
       s << "return new " << (meta_class->generateShellClass()?shellClassName(meta_class):meta_class->qualifiedCppName()) << "(";
@@ -281,7 +281,7 @@ void ShellImplGenerator::write(QTextStream &s, const AbstractMetaClass *meta_cla
       continue;
     }
     writeFunctionSignature(s, fun, meta_class, QString(),
-      Option(AddOwnershipTemplates | ConvertReferenceToPtr | FirstArgIsWrappedObject | OriginalName | ShowStatic | UnderscoreSpaces | ProtectedEnumAsInts),
+      Option(AddOwnershipTemplates | ConvertReferenceToPtr | FirstArgIsWrappedObject | ShowStatic | UnderscoreSpaces | ProtectedEnumAsInts),
       "PythonQtWrapper_");
     s << endl << "{" << endl;
     s << "  ";
@@ -314,6 +314,12 @@ void ShellImplGenerator::write(QTextStream &s, const AbstractMetaClass *meta_cla
       } else if (scriptFunctionName.startsWith("operator") && args.size()==1 && !fun->wasProtected()) {
         QString op = scriptFunctionName.mid(8);
         s << wrappedObject << op << " " << args.at(0)->argumentName();
+      }
+      else if (scriptFunctionName.startsWith("operator") && args.size() == 0 && scriptFunctionName.length() == 9 && !fun->wasProtected()) {
+        // only the unary operators consisting of one char can be applied by prepending the operator...
+        QString op = scriptFunctionName.mid(8);
+        // unary operator
+        s << op << " " << wrappedObject;
       } else {
         if (fun->isStatic()) {
           if (fun->wasProtected()) {

@@ -5,7 +5,14 @@ on:
     branches: 
       - master
   pull_request:
-      
+   
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+   
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+    
 defaults:
   run:
     shell: bash
@@ -47,19 +54,37 @@ jobs:
     - name: Checkout PythonQt
       uses: actions/checkout@v4
 
+    - name: Ccache
+      uses: hendrikmuhs/ccache-action@v1.2.14
+      with:
+         key: ${{ runner.os }}-ubuntu-${{ matrix.container_version }} 
+         
     - name: Build PythonQt
       run: |
         export QT_SELECT=qt5
         echo ======= SYSTEM INFO ========
         uname -a; gcc --version | grep "gcc"; python3 --version; qmake --version
         echo ============================
-        qmake -r PythonQt.pro CONFIG+=release CONFIG+=force_debug_info \
+        qmake -r PythonQt.pro CONFIG+=ccache CONFIG+=release CONFIG+=force_debug_info \
         CONFIG+=sanitizer CONFIG+=sanitize_undefined CONFIG+=sanitize_address \
         PYTHON_VERSION=$(python3 --version | cut -d " " -f 2 | cut -d "." -f1,2) \
         PYTHON_DIR=$(which python3 | xargs dirname | xargs dirname)
         make -j $(nproc)
+        PYTHONDEVMODE=1 PYTHONASYNCIODEBUG=1 PYTHONWARNINGS=error PYTHONMALLOC=malloc_debug \
         UBSAN_OPTIONS="halt_on_error=1" ASAN_OPTIONS="detect_leaks=0:detect_stack_use_after_return=1:fast_unwind_on_malloc=0" \
           make check TESTARGS="-platform offscreen"
+        
+    - name: Run memory tests with sanitizers
+      run: |
+        QT_VERSION_FULL=$(qmake -query QT_VERSION)
+        if [[ "$QT_VERSION_FULL" == 5.12* ]]; then
+          echo "leak:QPlatformIntegrationFactory::create" >> $PWD/lsan.supp
+          export LSAN_OPTIONS="suppressions=$PWD/lsan.supp"
+        fi
+        PYTHONDEVMODE=1 PYTHONASYNCIODEBUG=1 PYTHONWARNINGS=error PYTHONMALLOC=malloc_debug \
+        UBSAN_OPTIONS="halt_on_error=1" ASAN_OPTIONS="detect_leaks=1:detect_stack_use_after_return=1:fast_unwind_on_malloc=0" \
+        PYTHONQT_RUN_ONLY_MEMORY_TESTS=1 \
+          make check TESTARGS="-platform minimal"
       
     - name: Generate Wrappers
       run: |
@@ -92,6 +117,13 @@ jobs:
     runs-on: ubuntu-latest
     container: '${{ matrix.container_os }}:${{ matrix.container_os_version }}'
     steps:
+    - name: Change centos archive repository
+      run: |
+        sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo
+        sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo
+        sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
+      if: matrix.container_os == 'centos'
+      
     - name: Install Qt
       run: |
         yum update -y
@@ -124,7 +156,9 @@ jobs:
         echo PYTHON_DIR=${PYTHON_DIR}
         qmake-qt5 -r PythonQt.pro CONFIG+=${{ matrix.configuration }} \
           "PYTHON_VERSION=${PYTHON_VERSION_SHORT}" "PYTHON_DIR=${PYTHON_DIR}"
-        make -j $(nproc) && make check TESTARGS="-platform offscreen"
+        make -j $(nproc) && \
+        PYTHONDEVMODE=1 PYTHONASYNCIODEBUG=1 PYTHONWARNINGS=error PYTHONMALLOC=malloc_debug \
+          make check TESTARGS="-platform offscreen"
 
     - name: Generate Wrappers
       run: |
@@ -144,21 +178,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-       macos-version:  ['11']
-       python-version: ['3.6']
+       macos-version:  ['latest']
+       python-version: ['3.9']
        qt-version: ['5.9.*']
        configuration: ['release','debug']
        include:
-         - macos-version: '12'
+         - macos-version: 'latest'
            python-version: '3.11'
            qt-version: '5.12.*'
            configuration: 'debug'
     runs-on: macos-${{ matrix.macos-version }}
     steps:
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v4
       with:
-        aqtversion: '==2.1.*'
         version: ${{ matrix.qt-version }}
         host: 'mac'
         target: 'desktop'
@@ -174,13 +207,18 @@ jobs:
     - name: Checkout PythonQt
       uses: actions/checkout@v4
 
+    - name: Ccache
+      uses: hendrikmuhs/ccache-action@v1.2.14
+      with:
+         key: ${{ runner.os }}-${{ matrix.qt-version }} 
+         
     - name: Detect exact versions
       id : versions
       run : |
         set -eu
         PYTHON_VERSION_FULL=$(python --version 2>&1 | cut -f 2 -d ' ')
         PYTHON_VERSION_SHORT=$(cut -f 1,2 -d . <<< $PYTHON_VERSION_FULL)
-        QT_VERSION_FULL=$($Qt5_Dir/bin/qmake -query QT_VERSION)
+        QT_VERSION_FULL=$($QT_ROOT_DIR/bin/qmake -query QT_VERSION)
         QT_VERSION_SHORT=$(cut -f 1,2 -d . <<< $QT_VERSION_FULL)
         MACOS_VERSION_FULL=$(sw_vers -productVersion)
         MACOS_VERSION_SHORT=$(cut -f 1,2 -d . <<< $MACOS_VERSION_FULL)
@@ -202,12 +240,13 @@ jobs:
         for i in "python${{ steps.versions.outputs.PYTHON_VERSION_SHORT }}-embed" "python${{ steps.versions.outputs.PYTHON_VERSION_SHORT }}" \
                  "python${PYTHON_VERSION_MAJOR}-embed" "python${PYTHON_VERSION_MAJOR}"
         do if pkg-config --exists "$i"; then PYTHON_PKGCONFIG_NAME="$i"; break; fi; done
-        qmake CONFIG+=${{ matrix.configuration }} CONFIG+=sanitizer CONFIG+=sanitize_undefined CONFIG+=sanitize_address \
+        qmake CONFIG+=ccache CONFIG+=${{ matrix.configuration }} CONFIG+=sanitizer CONFIG+=sanitize_undefined CONFIG+=sanitize_address \
           PYTHON_VERSION=${{ steps.versions.outputs.PYTHON_VERSION_SHORT }} \
           PYTHON_DIR="$pythonLocation" \
           PKGCONFIG+=$PYTHON_PKGCONFIG_NAME \
           -r PythonQt.pro
         make -j $(nproc)
+        PYTHONDEVMODE=1 PYTHONASYNCIODEBUG=1 PYTHONWARNINGS=error PYTHONMALLOC=malloc_debug \
         UBSAN_OPTIONS="halt_on_error=1" ASAN_OPTIONS="detect_leaks=0:detect_stack_use_after_return=1:fast_unwind_on_malloc=0" \
           make check TESTARGS="-platform offscreen"
 
@@ -217,7 +256,7 @@ jobs:
         cd generator
         # workaround to allow to find the Qt include dirs for installed standard qt packages
         UBSAN_OPTIONS="halt_on_error=1" ASAN_OPTIONS="detect_leaks=0:detect_stack_use_after_return=1:fast_unwind_on_malloc=0" \
-        QTDIR=-UNDEFINED- ./pythonqt_generator --qt-version=${{ steps.versions.outputs.QT_VERSION_FULL }} --include-paths=$Qt5_Dir/lib
+        QTDIR=-UNDEFINED- ./pythonqt_generator --qt-version=${{ steps.versions.outputs.QT_VERSION_FULL }} --include-paths=$QT_ROOT_DIR/lib
 
     - name: Upload Wrappers
       uses: actions/upload-artifact@v4
@@ -241,6 +280,12 @@ jobs:
            python-arch: 'x64'
            qt-version: '5.11.*'
 #           msvc-toolset: '14.16'
+
+         - qt-arch: 'win64_msvc2019_64'
+           python-version: '3.12'
+           python-arch: 'x64'
+           qt-version: '5.15.*'
+           pythonqtall-config: 'PythonQtCore PythonQtGui PythonQtMultimedia'
 
          - qt-arch: 'win32_mingw53'
            python-version: '3.6'
@@ -271,9 +316,8 @@ jobs:
         arch: amd64${{ contains(matrix.python-arch, 'x86') && '_x86' || '' }}
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v4
       with:
-        aqtversion: '==2.1.*'
         version: ${{ matrix.qt-version }}
         host: 'windows'
         target: 'desktop'
@@ -293,7 +337,7 @@ jobs:
       id: versions
       run: |
         set -eu
-        QT_VERSION_FULL=$("$Qt5_Dir/bin/qmake" -query QT_VERSION)
+        QT_VERSION_FULL=$("$QT_ROOT_DIR/bin/qmake" -query QT_VERSION)
         QT_VERSION_SHORT=$(cut -f 1,2 -d . <<< $QT_VERSION_FULL)
         PYTHON_VERSION_FULL=$(python --version 2>&1 | cut -f 2 -d ' ')
         PYTHON_VERSION_SHORT=$(cut -f 1,2 -d . <<< $PYTHON_VERSION_FULL)
@@ -301,35 +345,31 @@ jobs:
         echo "QT_VERSION_SHORT=$QT_VERSION_SHORT" | tee -a $GITHUB_OUTPUT
         echo "PYTHON_VERSION_SHORT=$PYTHON_VERSION_SHORT" | tee -a $GITHUB_OUTPUT
 
-    - name: Add Qt and MinGW to PATH
-      shell: cmd
-      run: |
-        set "ADDPATH=%Qt5_Dir%\bin"
-        ${{ contains(matrix.qt-arch, 'mingw') && format('FOR /F "tokens=1,2 delims=_" %%I IN ("{0}") DO SET "ADDPATH=%ADDPATH%;%IQTA_TOOLS%\%%J0_{1}\bin', matrix.qt-arch, contains(matrix.qt-arch, 'win32') && '32' || '64') || '' }}
-        echo PATH=%ADDPATH%;%PATH% >> %GITHUB_ENV%
-        echo CL=/MP >> $GITHUB_ENV
-
     - name: Build PythonQt
       shell: cmd
       run: |
         qmake -query
         python --version
+        set PYTHONQTALL_CONFIG=${{ matrix.pythonqtall-config }}
         qmake CONFIG+=release CONFIG-=debug_and_release CONFIG-=debug_and_release_target ^
-           "PYTHONQTALL_CONFIG=${{ matrix.pythonqtall-config }}" ^
            "PYTHON_PATH=%pythonLocation%" ^
            "PYTHON_VERSION=${{ steps.versions.outputs.PYTHON_VERSION_SHORT }}" ^
            PythonQt.pro
+        set PYTHONDEVMODE=1
+        set PYTHONASYNCIODEBUG=1
+        set PYTHONWARNINGS=error
         mingw32-make -j 2 && mingw32-make check "TESTARGS=-platform offscreen" ^
-          || nmake && nmake check "TESTARGS=-platform offscreen"
+          || set CL=/MP && nmake && nmake check "TESTARGS=-platform offscreen"
 
     - name: Generate Wrappers
       shell: cmd
       run: |
         cd generator
-        set QTDIR=%Qt5_Dir%
+        set QTDIR=%QT_ROOT_DIR%
         pythonqt_generator
 
     - name: Upload Wrappers
+      if: (matrix.pythonqtall-config || '') == ''
       uses: actions/upload-artifact@v4
       with:
         name: wrappers_${{ matrix.qt-arch }}_${{ steps.versions.outputs.QT_VERSION_SHORT }}

@@ -41,6 +41,43 @@
 
 #include "PythonQtTests.h"
 
+void PythonQtMemoryTests::testBaseCleanup()
+{
+  PythonQt::init();
+  PythonQt::cleanup();
+}
+
+void PythonQtMemoryTests::testCleanupWithFlags()
+{
+  PythonQt::init(PythonQt::IgnoreSiteModule | PythonQt::RedirectStdOut);
+  PythonQt::cleanup();
+}
+
+void PythonQtMemoryTests::testInitAlreadyInitialized()
+{
+  Py_InitializeEx(true);
+  PythonQt::init(PythonQt::PythonAlreadyInitialized);
+  PythonQt::cleanup();
+}
+
+void PythonQtMemoryTests::testSeveralCleanup() {
+  PythonQt::init();
+  PythonQt::cleanup();
+
+  PythonQt::init();
+  PythonQt::cleanup();
+}
+
+void PythonQtMemoryTests::testInitWithPreconfig() {
+#if PY_VERSION_HEX >= 0x03080000
+  PyConfig config;
+  PyConfig_InitPythonConfig(&config);
+  Py_InitializeFromConfig(&config);
+  PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
+  PythonQt::cleanup();
+#endif
+}
+
 void PythonQtTestSlotCalling::initTestCase()
 {
   _helper = new PythonQtTestSlotCallingHelper(this);
@@ -193,7 +230,11 @@ void PythonQtTestSlotCalling::testPODSlotCalls()
   QVERIFY(_helper->runScript("if obj.getUInt(42)==42: obj.setPassed();\n"));
   QVERIFY(_helper->runScript("if obj.getShort(-43)==-43: obj.setPassed();\n"));
   QVERIFY(_helper->runScript("if obj.getUShort(43)==43: obj.setPassed();\n"));
+#if (CHAR_MIN + 0)
   QVERIFY(_helper->runScript("if obj.getChar(-12)==-12: obj.setPassed();\n"));
+#else
+  QVERIFY(_helper->runScript("if obj.getChar(250)==250: obj.setPassed();\n"));
+#endif
   QVERIFY(_helper->runScript("if obj.getUChar(12)==12: obj.setPassed();\n"));
   QVERIFY(_helper->runScript("if obj.getLong(-256*256*256)==-256*256*256: obj.setPassed();\n"));
   QVERIFY(_helper->runScript("if obj.getULong(256*256*256)==256*256*256: obj.setPassed();\n"));

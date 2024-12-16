@@ -169,7 +169,9 @@
   <rejection class="QGradient" function-name="interpolationMode"/>
   <rejection class="QAbstractTextDocumentLayout" function-name="handlerForObject"/>
   <rejection class="QPixmap" function-name="fromImageInPlace"/>
-  
+
+  <rejection class="QRhiWidget" since-version="6.7"/> <!-- rest of QRhi API currently not available -->
+
   <enum-type name="QStaticText::PerformanceHint"/>
   <enum-type name="QTextBlockFormat::LineHeightTypes"/>
   <enum-type name="QStyleOptionTabWidgetFrameV2::StyleOptionVersion"/>
@@ -291,6 +293,7 @@
   <enum-type name="QGraphicsView::ViewportUpdateMode"/>
   <enum-type name="QIcon::Mode"/>
   <enum-type name="QIcon::State"/>
+  <enum-type name="QIcon::ThemeIcon" since-version="6.7"/>
   <enum-type name="QImage::Format"/>
   <enum-type name="QImage::InvertMode"/>
   <enum-type name="QImageIOHandler::ImageOption"/>
@@ -794,9 +797,6 @@
   <value-type name="QTextFormat">
     <modify-function signature="operator=(QTextFormat)" remove="all"/>
     <modify-function signature="isValid()const" access="non-final"/>
-
-    <modify-function signature="setProperty(int,QVector&lt;QTextLength&gt;)" rename="setLengthVectorProperty" before-version="6"/>
-    <modify-function signature="setProperty(int,const QList&lt;QTextLength&gt;&amp;)" rename="setLengthVectorProperty" since-version="6"/>
   </value-type>
 
   <value-type name="QTextListFormat"/>
@@ -914,10 +914,6 @@
 
       <modify-function signature="operator*(QMatrix)const" access="private"/>
       <modify-function signature="operator*=(QMatrix)" access="private"/>
-      <modify-function signature="rotate(double)" access="private" rename="rotate_private"/>
-      <modify-function signature="scale(double,double)" access="private" rename="scale_private"/>
-      <modify-function signature="shear(double,double)" access="private" rename="shear_private"/>
-      <modify-function signature="translate(double,double)" access="private" rename="translate_private"/>
   </value-type>
 
   <value-type name="QConicalGradient" polymorphic-id-expression="%1-&gt;type() == QGradient::ConicalGradient">
@@ -952,6 +948,25 @@
         <include file-name="QStringList" location="global"/>
     </extra-includes>
     <modify-function signature="operator=(QFont)" remove="all"/>
+  </value-type>
+
+  <value-type name="QFont::Tag" since-version="6.7">
+    <inject-code class="pywrap-h">
+    // a little bit complicated, since we currently dont't support std::optional:
+    QFont::Tag static_QFont__Tag_fromString(const QString&amp; name) {
+      return QFont::Tag::fromString(name).value_or(QFont::Tag());
+    }
+    QFont::Tag static_QFont__Tag_fromValue(unsigned int key) {
+      return QFont::Tag::fromValue(key).value_or(QFont::Tag());
+    }
+    // basically the same as above:
+    QFont::Tag* new_QFont__Tag(const QString&amp; name) {
+      return new QFont::Tag(static_QFont__Tag_fromString(name));
+    }
+    QFont::Tag* new_QFont__Tag(unsigned int key) {
+      return new QFont::Tag(static_QFont__Tag_fromValue(key));
+    }
+    </inject-code>
   </value-type>
 
   <value-type name="QTextTableCell">
@@ -1417,10 +1432,6 @@ PyObject* constScanLine(QImage* image, int line) {
   </object-type>
 
   <object-type name="QPixmapCache">
-    <modify-function signature="find(QString)">
-        <remove/>
-    </modify-function>
-    <modify-function signature="find(QString,QPixmap*)" remove="all"/>
   </object-type>
   <object-type name="QPlastiqueStyle">
     <modify-function signature="standardPixmap(QStyle::StandardPixmap, const QStyleOption*, const QWidget*)const" remove="all"/> <!--### Obsolete in 4.3-->
@@ -1544,8 +1555,6 @@ PyObject* constScanLine(QImage* image, int line) {
   <object-type name="QTextBlockUserData"/>
   <object-type name="QTextItem"/>
   <object-type name="QTextList">
-    <modify-function signature="format()const" rename="textListFormat"/>
-
       <modify-function signature="isEmpty()const" remove="all"/> <!--### Obsolete in 4.3-->
   </object-type>
   <object-type name="QTextObject"/>
@@ -1700,6 +1709,8 @@ PyObject* constScanLine(QImage* image, int line) {
   <object-type name="QPaintEvent" polymorphic-id-expression="%1-&gt;type() == QEvent::Paint"/>
   <object-type name="QAccessibleEvent" polymorphic-id-expression="%1-&gt;type() == QEvent::AccessibilityDescription || %1-&gt;type() == QEvent::AccessibilityHelp"/>
 
+  <object-type name="QChildWindowEvent" polymorphic-id-expression="%1-&gt;type() == QEvent::ChildWindowAdded || %1-&gt;type() == QEvent::ChildWindowRemoved" since-version="6.7"/>
+
   <object-type name="QAbstractButton"/>
 
   <object-type name="QStyle" create-shell="no">
@@ -1755,8 +1766,6 @@ PyObject* constScanLine(QImage* image, int line) {
       </modify-argument>
     </modify-function>
 
-    <modify-function signature="setSpacing(int)" rename="setWidgetSpacing"/>
-    <modify-function signature="spacing()const" rename="widgetSpacing"/>
     <modify-function signature="getContentsMargins(int*,int*,int*,int*)const" remove="all"/>
 
     <modify-function signature="margin()const" remove="all"/> <!--### Obsolete in 4.3-->
@@ -1883,9 +1892,6 @@ PyObject* constScanLine(QImage* image, int line) {
 
       <modify-function signature="isHeaderVisible()const" remove="all"/> <!--### Obsolete in 4.3-->
       <modify-function signature="setHeaderVisible(bool)" remove="all"/> <!--### Obsolete in 4.3-->
-  
-      <modify-function signature="sizeHint()const" rename="getSizeHint"/>
-      <modify-function signature="minimumSizeHint()const" rename="getMinimumSizeHint"/>
   </object-type>
 
   <object-type name="QTreeWidget">
@@ -2177,9 +2183,6 @@ PyObject* constScanLine(QImage* image, int line) {
       <modify-function signature="setShown(bool)" remove="all"/> <!--### Obsolete in 4.3-->
       <modify-function signature="topLevelWidget()const" remove="all"/> <!--### Obsolete in 4.3-->
       <modify-function signature="windowActivationChange(bool)" remove="all"/> <!--### Obsolete in 4.3-->
-  
-    <modify-function signature="sizeHint()const" rename="getSizeHint"/>
-    <modify-function signature="minimumSizeHint()const" rename="getMinimumSizeHint"/>
   </object-type>
 
   <object-type name="QMessageBox">
