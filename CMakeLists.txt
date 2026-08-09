@@ -4,7 +4,7 @@
 # If you are not a CMake expert, you should better use the provided qmake profiles.
 #-----------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.8	)
+cmake_minimum_required(VERSION 3.15)
 project(PythonQt)
 
 # ----------------------------------Qt-----------------------------------

@@ -17,8 +17,6 @@ set(INCLUDE_PATH
 		${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_core
 		${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_core_builtin)
 
-include_directories(${INCLUDE_PATH})
-
 link_directories(${PYTHON_PATH}/bin)
 
 set(SRCS
@@ -106,7 +104,7 @@ qt5_wrap_cpp(MOC_GUISRCS ${GUIHDRS})
 qt5_wrap_cpp(MOC_ScriptDebugger_SRCS ${ScriptDebugger_HDRS})
 qt5_add_resources(WScriptDebugger_RES ${ScriptDebugger_RES})
 
-set(TARGET_NAME PythonQt-Qt5-Python${PYTHON_VERSION}${BUILD_POSTFIX}3)
+set(TARGET_NAME PythonQt-Qt5-Python)
 	
 if(PYTHONQT_STATIC)
 	set(LIBRARY_TYPE STATIC)
@@ -120,7 +118,7 @@ add_library(PythonQt-Qt5-Python ${LIBRARY_TYPE} ${SRCS} ${MOC_SRCS}
 		${GUISRCS} ${MOC_GUISRCS} ${WScriptDebugger_RES})
 target_link_libraries(PythonQt-Qt5-Python Qt5::CorePrivate Qt5::Widgets)
 target_link_libraries(PythonQt-Qt5-Python python${PYTHON_VERSION_USEFUL})
-
+target_include_directories(PythonQt-Qt5-Python PUBLIC ${INCLUDE_PATH})
 if(${LIBRARY_TYPE} STREQUAL SHARED)
 	set(OUTPUT_TYPE RUNTIME)
 else(${LIBRARY_TYPE} STREQUAL SHARED)

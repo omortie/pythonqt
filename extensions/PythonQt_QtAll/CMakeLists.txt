@@ -32,8 +32,6 @@ ${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_xml
 ${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_xmlpatterns
 ${CMAKE_SOURCE_DIR}/src)
 
-include_directories(${INCLUDE_PATH})
-
 set(PYTHONQTALL_SRCS PythonQt_QtAll.cpp)
 set(PYTHONQTALL_HDRS PythonQt_QtAll.h)
 
@@ -87,7 +85,7 @@ qt5_wrap_cpp(MOC_PythonQt_UI_SRCS ${PythonQt_UI_HDRS})
 qt5_wrap_cpp(MOC_PythonQt_xml_SRCS ${PythonQt_xml_HDRS})
 qt5_wrap_cpp(MOC_PythonQt_xmlPatterns_SRCS ${PythonQt_xmlPatterns_HDRS})
 
-set(TARGET_NAME PythonQt_QtAll-Qt5-Python${PYTHON_VERSION}${BUILD_POSTFIX}3)
+set(TARGET_NAME PythonQt_QtAll-Qt5-Python)
 
 if(PYTHONQT_STATIC)
 	set(LIBRARY_TYPE STATIC)
@@ -115,7 +113,8 @@ Qt5::Network Qt5::Xml Qt5::XmlPatterns Qt5::OpenGL Qt5::PrintSupport Qt5::Multim
 Qt5::Quick Qt5::Qml Qt5::QuickWidgets Qt5::UiTools)
 target_link_libraries(PythonQt_QtAll-Qt5-Python python${PYTHON_VERSION_USEFUL})
 link_directories(${CMAKE_SOURCE_DIR}/lib)
-target_link_libraries(PythonQt_QtAll-Qt5-Python PythonQt-Qt5-Python${PYTHON_VERSION}${BUILD_POSTFIX}3)
+target_link_libraries(PythonQt_QtAll-Qt5-Python PythonQt-Qt5-Python)
+target_include_directories(PythonQt_QtAll-Qt5-Python PUBLIC ${INCLUDE_PATH})
 
 if(${LIBRARY_TYPE} STREQUAL SHARED)
 	set(OUTPUT_TYPE RUNTIME)

@@ -6,9 +6,6 @@
 project(PyCustomMetaTypeExample)
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
-set(INCLUDE_PATH ${CMAKE_SOURCE_DIR}/src)
-include_directories(${INCLUDE_PATH})
-
 set(SRCS main.cpp CustomObject.cpp)
 set(HDRS CustomObject.h)
 set(RSRCS PyCustomMetaTypeExample.qrc)
@@ -18,6 +15,6 @@ qt5_add_resources(W_RSRCS ${RSRCS})
 
 add_executable(PyCustomMetaTypeExample ${SRCS} ${MOC_HDRS} ${W_RSRCS})
 target_link_libraries(PyCustomMetaTypeExample Qt5::Core Qt5::Widgets)
-target_link_libraries(PyCustomMetaTypeExample PythonQt-Qt5-Python${PYTHON_VERSION}${BUILD_POSTFIX}3)
+target_link_libraries(PyCustomMetaTypeExample PythonQt-Qt5-Python)
 set_target_properties(PyCustomMetaTypeExample PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set_target_properties(PyCustomMetaTypeExample PROPERTIES OUTPUT_NAME PyCustomMetaTypeExample${BUILD_POSTFIX})
