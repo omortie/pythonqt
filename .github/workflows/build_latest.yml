@@ -2,14 +2,14 @@ name: Check generated_cpp
 
 on:
   push:
-    branches: 
-       - master
+    branches:
+       - main
   pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
-  
+
 defaults:
   run:
     shell: bash
@@ -20,11 +20,11 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu', 'windows']
-        qt-version: [ '5.12.*', '5.15.*', '6.7.*' ]
+        qt-version: [ '5.12.*', '5.15.*', '6.11.*' ]
         python-version: [ '3.12' ]
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os == 'windows' && 'windows-2022' || 'ubuntu-latest' }}
     steps:
-      
+
     - name: Install MSVC
       if: ${{ matrix.os == 'windows' }}
       uses: ilammy/msvc-dev-cmd@v1
@@ -34,25 +34,28 @@ jobs:
     - name: Install Qt ${{matrix.qt-version}}
       uses: jurplel/install-qt-action@v4
       with:
-        # 6.7.* currently does not work with ubuntu with this action
-        version: ${{ matrix.os == 'ubuntu' && matrix.qt-version == '6.7.*' && '6.6.*' || matrix.qt-version }}
+        version: ${{ matrix.qt-version }}
         modules: ${{startsWith(matrix.qt-version, '6') && 'qt5compat qtscxml qtpositioning qtwebchannel qtmultimedia qtwebengine' || '' }}
-        arch: ${{ matrix.os == 'ubuntu' && 'gcc_64' || (startsWith(matrix.qt-version, '5.12') && 'win64_msvc2017_64' || 'win64_msvc2019_64') }}
+        arch: ${{ (matrix.os == 'ubuntu' && (startsWith(matrix.qt-version, '5') && 'gcc_64' || 'linux_gcc_64')) || startsWith(matrix.qt-version, '5.12') && 'win64_msvc2017_64' || startsWith(matrix.qt-version, '6') && 'win64_msvc2022_64' || 'win64_msvc2019_64' }}
+        # aqtinstall 3.3.0 (latest release) lacks Qt 6.11 folder-structure support.
+        # Use git 151f6f4 until aqtinstall 3.4.0 is released (miurahr/aqtinstall#1000).
+        aqtsource: ${{ startsWith(matrix.qt-version, '6.11') && 'git+https://github.com/miurahr/aqtinstall.git@151f6f436c2f5a5ceb7890ad970ca6f3b4d83512' || '' }}
 
     - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v7
       with:
         python-version: '${{ matrix.python-version }}'
 
     - name: Checkout PythonQt
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Ccache
-      uses: hendrikmuhs/ccache-action@v1.2.14
+      uses: hendrikmuhs/ccache-action@v1.2.23
       with:
          key: ${{ runner.os }}-${{ matrix.qt-version }}
+         evict-old-files: 'job'
       if: ${{ matrix.os == 'ubuntu' }}
-         
+
     - name: Set environment
       id: setenv
       run: |
@@ -85,19 +88,20 @@ jobs:
     - name: Generate Wrappers
       shell: bash
       run: |
-        cd generator
         QTDIR="$QT_ROOT_DIR" \
         UBSAN_OPTIONS="halt_on_error=1" \
         ASAN_OPTIONS="detect_leaks=0:detect_stack_use_after_return=1:fast_unwind_on_malloc=0" \
-        ./pythonqt_generator
+        ./generator/pythonqt_generator \
+           --output-directory=.
 
     - name: Upload Wrappers
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: wrappers_${{ matrix.os }}_${{ steps.setenv.outputs.QT_VERSION_SHORT }}
         path: generated_cpp
+        if-no-files-found: error
 
-    - name: Build PythonQt Ubuntu
+    - name: Build PythonQt Ubuntu (exclude_generator)
       if: ${{ matrix.os == 'ubuntu' }}
       run: |
         echo ======= SYSTEM INFO ========
@@ -105,20 +109,22 @@ jobs:
         echo ============================
         qmake -r PythonQt.pro CONFIG+=ccache CONFIG+=release CONFIG+=force_debug_info \
         CONFIG+=sanitizer CONFIG+=sanitize_undefined CONFIG+=sanitize_address \
+        CONFIG+=exclude_generator \
         PYTHON_VERSION=$(python3 --version | cut -d " " -f 2 | cut -d "." -f1,2) \
         PYTHON_DIR=$(which python3 | xargs dirname | xargs dirname)
         make -j $(nproc)
         PYTHONDEVMODE=1 PYTHONASYNCIODEBUG=1 PYTHONWARNINGS=error PYTHONMALLOC=malloc_debug \
         UBSAN_OPTIONS="halt_on_error=1" ASAN_OPTIONS="detect_leaks=0:detect_stack_use_after_return=1:fast_unwind_on_malloc=0" \
           make check TESTARGS="-platform offscreen"
-          
-    - name: Build PythonQt Windows
+
+    - name: Build PythonQt Windows (exclude_generator)
       shell: cmd
       if: ${{ matrix.os == 'windows' }}
       run: |
         qmake -query
         python --version
         qmake CONFIG+=release CONFIG-=debug_and_release CONFIG-=debug_and_release_target ^
+           CONFIG+=exclude_generator ^
            "PYTHONQTALL_CONFIG=${{ matrix.pythonqtall-config }}" ^
            "PYTHON_PATH=%pythonLocation%" ^
            "PYTHON_VERSION=${{ steps.setenv.outputs.PYTHON_VERSION_SHORT }}" ^

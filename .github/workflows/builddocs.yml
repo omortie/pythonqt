@@ -2,8 +2,8 @@ name: Build and Deploy Documentation
 
 on:
   push:
-    branches: 
-      - master
+    branches:
+      - main
 
 defaults:
   run:
@@ -13,19 +13,19 @@ jobs:
   build_docs:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout master
-        uses: actions/checkout@v4
+      - name: Checkout main
+        uses: actions/checkout@v7
 
       - name: Install Doxygen
         run: sudo apt-get install doxygen graphviz -y
 
       - name: Build documentation
         run: |
-          cd doxygen 
+          cd doxygen
           doxygen
           touch html/.nojekyll
           cd ..
-        
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:

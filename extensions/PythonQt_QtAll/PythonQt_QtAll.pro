@@ -35,8 +35,8 @@ TEMPLATE = lib
 
 DESTDIR    = ../../lib
 
-include ( ../../build/common.prf )  
-include ( ../../build/PythonQt.prf )  
+include ( ../../build/common.prf )
+include ( ../../build/PythonQt.prf )
 TARGET = $$replace(TARGET, PythonXY, Python$${PYTHON_VERSION})
 
 CONFIG += qt strict_c++ msvc_mp
@@ -51,7 +51,7 @@ DEFINES += PYTHONQT_QTALL_EXPORTS
 
 HEADERS +=                \
   $$PWD/PythonQt_QtAll.h
-  
+
 SOURCES +=                \
   $$PWD/PythonQt_QtAll.cpp
 
@@ -68,6 +68,8 @@ unix {
 
 unix: target.path = $${INSTALL_PREFIX}/lib
 win32: target.path = /
+
+msvc:QMAKE_CXXFLAGS += /bigobj
 
 headers.files = $${HEADERS}
 headers.path = $${INSTALL_PREFIX}/include

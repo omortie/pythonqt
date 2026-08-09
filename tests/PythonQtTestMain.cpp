@@ -41,16 +41,23 @@
 
 #include "PythonQt.h"
 #include "PythonQtTests.h"
+#include "PythonQtTestCleanup.h"
 
 #include <QApplication>
 
-int main( int argc, char **argv )
+int main(int argc, char* argv[])
 {
   QApplication qapp(argc, argv);
 
   if (QProcessEnvironment::systemEnvironment().contains("PYTHONQT_RUN_ONLY_MEMORY_TESTS")) {
     PythonQtMemoryTests test;
     QTest::qExec(&test, argc, argv);
+    return 0;
+  }
+
+  if (QProcessEnvironment::systemEnvironment().contains("PYTHONQT_RUN_ONLY_CLEANUP_TESTS")) {
+    PythonQtTestCleanup cleanup;
+    QTest::qExec(&cleanup, argc, argv);
     return 0;
   }
 
@@ -65,6 +72,10 @@ int main( int argc, char **argv )
 
   PythonQt::cleanup();
 
+  if (Py_IsInitialized()) {
+    Py_Finalize();
+  }
+
   if (failCount) {
     std::cerr << "Tests failed: " << failCount << std::endl;
   } else {
@@ -72,4 +83,3 @@ int main( int argc, char **argv )
   }
   return failCount != 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
-

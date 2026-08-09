@@ -11,6 +11,8 @@
      <include file-name="qtsqlglobal.h" location="global" since-version="6"/>
   </namespace-type>
 
+  <value-type name="QSqlDatabaseDefaultConnectionName" since-version="6.11"/>
+
   <value-type name="QSqlDatabase">
     <extra-includes>
         <include file-name="QSqlQuery" location="global"/>
@@ -25,7 +27,7 @@
     <modify-function signature="contains(const QString &amp;)">
       <modify-argument index="1">
         <replace-default-expression with="QLatin1String(QSqlDatabase::defaultConnection)"/>
-      </modify-argument>      
+      </modify-argument>
     </modify-function>
     <modify-function signature="database(const QString &amp;,bool)">
       <modify-argument index="1">

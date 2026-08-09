@@ -6,7 +6,6 @@
 
   <rejection class="QTextCodec::ConverterState"/>
   <rejection class="QTextCodecFactoryInterface"/>
-  <rejection class="QAbstractEventDispatcher"/>
   <rejection class="QAbstractFileEngine"/>
   <rejection class="QAbstractFileEngineHandler"/>
   <rejection class="QAbstractFileEngineIterator"/>
@@ -76,6 +75,7 @@
 <rejection class="QMetaTypeIdQObject"/>
 <rejection class="QPalette::Data"/>
 
+<rejection class="QRangeModel" since-version="6.10"/> <!-- templated range-based class -->
 <rejection class="QScopedPointerObjectDeleteLater"/>
 <rejection class="QScopedValueRollback"/>
 <rejection class="QSequentialIterable"/>
@@ -164,66 +164,23 @@
 <rejection class="underlying_type"/>
 <rejection class="vector"/>
 
-  <primitive-type name="qgl_GLsizeiptr"/>
-  <primitive-type name="qgl_GLintptr"/>
-  <primitive-type name="GLint"/>
-  <primitive-type name="GLuint"/>
-  <primitive-type name="GLenum"/>
-  <primitive-type name="GLclampf"/>
-  <primitive-type name="GLsizei"/>
-  <primitive-type name="GLfloat"/>
-  <primitive-type name="GLbitfield"/>
-  <primitive-type name="GLbyte"/>
-  <primitive-type name="GLshort"/>
-  <primitive-type name="GLubyte"/>
-  <primitive-type name="GLushort"/>
-  <primitive-type name="GLdouble"/>
-  <primitive-type name="GLclampd"/>
-  <primitive-type name="GLvoid"/>
-  <primitive-type name="GLboolean"/>
-  <primitive-type name="GLuint64"/>
+<rejection class="ArgResolver"/>
+<rejection class="ArgsType"/>
+<rejection class="AsyncContinuation"/>
+<rejection class="CanceledHandler"/>
+<rejection class="CompactContinuation"  since-version="6.9"/>
+<rejection class="Continuation"/>
+<rejection class="ContinuationWrapper"/>
+<rejection class="FailureHandler"/>
+<rejection class="Future"/>
+<rejection class="QHashHeterogeneousSearch"/>
+<rejection class="QPromise"/>
+<rejection class="QRunnable::QGenericRunnable"/>
+<rejection class="QVersionNumber::It"/>
+<rejection class="ResultTypeHelper"/>
+<rejection class="SyncContinuation"/>
+<rejection class="UnwrapHandler"/>
 
-  <primitive-type name="bool"/>
-  <primitive-type name="double"/>
-  <primitive-type name="qreal"/>
-  <primitive-type name="float"/>
-  <primitive-type name="qint64"/>
-  <primitive-type name="quint64"/>
-  <primitive-type name="__int64"/>
-  <primitive-type name="unsigned __int64"/>
-  <primitive-type name="unsigned long long"/>
-  <primitive-type name="long long"/>
-  <primitive-type name="qlonglong"/>
-  <primitive-type name="qulonglong"/>
-  <primitive-type name="short"/>
-  <primitive-type name="signed short"/>
-  <primitive-type name="ushort"/>
-  <primitive-type name="unsigned short"/>
-  <primitive-type name="char"/>
-  <primitive-type name="signed char"/>
-  <primitive-type name="uchar"/>
-  <primitive-type name="unsigned char"/>
-  <primitive-type name="int"/>
-  <primitive-type name="signed int"/>
-  <primitive-type name="uint"/>
-  <primitive-type name="ulong"/>
-  <primitive-type name="unsigned int"/>
-  <primitive-type name="signed long"/>
-  <primitive-type name="long"/>
-  <primitive-type name="unsigned long"/>
-  <primitive-type name="WId"/>
-  <primitive-type name="Qt::HANDLE"/>
-  <primitive-type name="QVariant::Type"/>
-  <primitive-type name="QByteRef"/>
-  <primitive-type name="QBitRef"/>
-  <primitive-type name="QBool"/>
-  <primitive-type name="jobject"/>
-  <primitive-type name="quintptr"/>
-  <primitive-type name="qintptr"/>
-  <primitive-type name="qptrdiff"/>
-  <primitive-type name="qsizetype"/>
-  <primitive-type name="Qt::Disambiguated_t"/>
-  
   <rejection class="qfloat16"/>  <!-- only used in QRgbaFloat template and QCborStreamReader/Writer so far -->
 
   <value-type name="QModelIndex"/>
@@ -236,7 +193,6 @@
   <rejection class="*" field-name="d"/>
 
   <rejection class="" enum-name="QtValidLicenseForTestModule"/>
-
 
   <rejection class="" enum-name="QtValidLicenseForDBusModule"/>
   <rejection class="" enum-name="QtValidLicenseForSqlModule"/>
@@ -272,6 +228,7 @@
   <rejection class="Qt::strong_ordering"/>
   <rejection class="Qt::weak_ordering"/>
   <rejection class="Qt::partial_ordering"/>
+  <rejection class="Qt::totally_ordered_wrapper"/>
 
   <rejection class="QSharedPointer"/>
   <rejection class="QWeakPointer"/>
@@ -497,6 +454,7 @@
   <rejection class="QMapPayloadNode"/>
   <rejection class="QMapData"/>
   <rejection class="QMapIterator"/>
+  <rejection class="QMetaType" enum-name="Type"/>    <!-- causes build problems because of QByteArray/QString values, should be enum class -->
   <rejection class="QMetaTypeId"/>
   <rejection class="QMetaAssociation"/>
   <rejection class="QMetaClassInfo::Data"/>
@@ -568,6 +526,7 @@
   <rejection class="QTaggedPointer"/>
   <rejection class="QTextStreamManipulator"/>
   <rejection class="QThreadStorage"/>
+  <rejection class="QThreadStorageTraits" since-version="6.11"/>
   <rejection class="QThreadStorageData"/>
   <rejection class="QTimeZone::Data"/>
   <rejection class="QTimeZone::ShortData"/>
@@ -667,8 +626,14 @@
   <rejection class="Qt" enum-name="Initialization"/>
   <rejection class="Qt::Disambiguated_t"/>
 
+  <rejection class="QAbstractEventDispatcherV2"/>  <!-- Currently not supported - can't cast to this type -->
+  <rejection class="QAbstractEventDispatcher::TimerInfoV2"/>
   <rejection class="QAbstractEventDispatcher" function-name="filterEvent"/>
   <rejection class="QAbstractEventDispatcher" function-name="setEventFilter"/>
+
+  <rejection class="QChronoTimer"/>  <!-- std::chrono::nanoseconds arguments not supported at the moment -->
+  <rejection class="QDirListing"/> <!-- iterator-style interface not supported -->
+
 
   <rejection class="QAbstractFileEngine" function-name="extension"/>
   <rejection class="QCoreApplication" function-name="compressEvent"/>
@@ -686,11 +651,14 @@
   <rejection class="QJsonArray" function-name="erase"/>
   <rejection class="QJsonArray" function-name="insert"/>
   <rejection class="QJsonObject" function-name="begin"/>
+  <rejection class="QJsonObject" function-name="asKeyValueRange" since-version="6.10"/>
   <rejection class="QJsonObject" function-name="cbegin"/>
   <rejection class="QJsonObject" function-name="cend"/>
   <rejection class="QJsonObject" function-name="constBegin"/>
   <rejection class="QJsonObject" function-name="constEnd"/>
   <rejection class="QJsonObject" function-name="constFind"/>
+  <rejection class="QJsonObject" function-name="constKeyValueBegin" since-version="6.10"/>
+  <rejection class="QJsonObject" function-name="constKeyValueEnd" since-version="6.10"/>
   <rejection class="QJsonObject" function-name="end"/>
   <rejection class="QJsonObject" function-name="erase"/>
   <rejection class="QJsonObject" function-name="find"/>
@@ -752,6 +720,38 @@
   <rejection class="QtConcurrent::ThreadEngineBarrier"/>
 
   <rejection class="QAbstractFileEngineIterator" enum-name="EntryInfoType"/>
+
+  <group since-version="6.11">
+    <!-- qrangemodeladapter_impl.h -->
+    <rejection class="AdapterStorage"/>
+    <rejection class="AsConstData"/>
+    <rejection class="AsConstRow"/>
+    <rejection class="AutoConnectContext"/>
+    <rejection class="ConnectionStorage"/>
+    <rejection class="DefaultTreeProtocol"/>
+    <rejection class="ListProtocol"/>
+    <rejection class="ModelData"/>
+    <rejection class="ParentIndex"/>
+    <rejection class="PropertyCache"/>
+    <rejection class="PropertyData"/>
+    <rejection class="QGenericTableItemModelImpl"/>
+    <rejection class="QGenericTreeItemModelImpl"/>
+    <rejection class="QRangeModelAdapter"/>
+    <rejection class="QRangeModelImpl"/>
+    <rejection class="QRangeModelImplBase"/>
+    <rejection class="RowView"/>
+    <rejection class="Storage"/>
+    <rejection class="TableProtocol"/>
+    <rejection class="is_tree_range"/>
+    <rejection class="item_traits"/>
+    <rejection class="protocol_deleteRow"/>
+    <rejection class="protocol_newRow"/>
+    <rejection class="protocol_traits"/>
+    <rejection class="row_traits"/>
+  </group>
+
+
+
 
   <namespace-type name="Qt">
 
@@ -1007,6 +1007,24 @@ public:
     <modify-function signature="operator=(QString)" remove="all"/>
     <modify-function signature="addResourceSearchPath(QString)" remove="all"/>
     <!--### Obsolete in 4.3-->
+
+    <!-- Qt 6.10 changed mkpath/mkdir signatures to use std::optional<QFile::Permissions>
+         Since we don't support std::optional, we need to provide wrapper methods -->
+    <inject-code class="pywrap-h" since-version="6.10">
+    // Workaround for std::optional parameters in Qt 6.10
+    bool mkpath(QDir* theWrappedObject, const QString&amp; dirPath) const {
+      return theWrappedObject->mkpath(dirPath);
+    }
+    bool mkdir(QDir* theWrappedObject, const QString&amp; dirName) const {
+      return theWrappedObject->mkdir(dirName);
+    }
+    bool mkpath(QDir* theWrappedObject, const QString&amp; dirPath, QFile::Permissions permissions) const {
+      return theWrappedObject->mkpath(dirPath, permissions);
+    }
+    bool mkdir(QDir* theWrappedObject, const QString&amp; dirName, QFile::Permissions permissions) const {
+      return theWrappedObject->mkdir(dirName, permissions);
+    }
+    </inject-code>
   </value-type>
 
   <value-type name="QPoint">
@@ -1110,7 +1128,6 @@ public:
     </inject-code>
   </value-type>
 
-
   <value-type name="QBitArray">
     <modify-function signature="operator[](int)" remove="all"/>
     <modify-function signature="operator[](int)const" remove="all"/>
@@ -1139,6 +1156,7 @@ public:
     </modify-function>
   </value-type>
 
+  <object-type name="QBasicReadWriteLock" since-version="6.11"/>
   <object-type name="QReadWriteLock"/>
   <object-type name="QDirIterator"/>
   <object-type name="QAbstractFileEngineIterator"/>
@@ -1234,6 +1252,7 @@ public:
     <modify-function signature="operator[](uint)const" remove="all"/>
     <modify-function signature="operator[](qsizetype)" remove="all"/>
     <modify-function signature="operator[](qsizetype)const" remove="all"/>
+    <modify-function signature="operator std::string_view()const" remove="all"/>
     <modify-function signature="push_back(char)" remove="all"/>
     <modify-function signature="push_back(const char*)" remove="all"/>
     <modify-function signature="push_front(char)" remove="all"/>
@@ -1436,11 +1455,9 @@ public:
   <object-type name="QFinalState"/>
 
   <object-type name="QXmlStreamEntityResolver"/>
-  <object-type name="QAbstractEventDispatcher">
-    <extra-includes>
-        <include file-name="QPair" location="global"/>
-    </extra-includes>
-  </object-type>
+  <object-type name="QAbstractEventDispatcher" create-promoter="no" create-shell="no" before-version="6"/>
+  <object-type name="QAbstractEventDispatcher" since-version="6"/>
+  <object-type name="QAbstractEventDispatcher::TimerInfo"/>
   <object-type name="QEventLoop"/>
   <object-type name="QFile">
     <modify-function signature="readLink()const" remove="all"/>
@@ -2030,7 +2047,7 @@ public:
     </inject-code>
   </object-type>
   <rejection class="QCborStreamReader::StringResult" since-version="6.7"/>
-  
+
   <object-type name="QCborValue" since-version="5.12">
     <modify-function signature="QCborValue(QCborTag, const QCborValue&amp;)" remove="all"/>
     <modify-function signature="tag(QCborTag)const" remove="all"/>
@@ -2065,6 +2082,9 @@ public:
   }
     </inject-code>
   </object-type>
+  <rejection class="QCborMap" function-name="asKeyValueRange" since-version="6.10"/>
+  <rejection class="QCborMap" function-name="constKeyValueBegin" since-version="6.10"/>
+  <rejection class="QCborMap" function-name="constKeyValueEnd" since-version="6.10"/>
   <rejection class="QCborMap::Iterator"/>
   <rejection class="QCborMap::ConstIterator"/>
   <object-type name="QCborError" since-version="5.12">
@@ -2098,9 +2118,6 @@ public:
   <suppress-warning text="WARNING(MetaJavaBuilder) :: skipping * unmatched *type 'QTSMFI'"/>
   <suppress-warning text="WARNING(MetaJavaBuilder) :: skipping * unmatched *type 'QAbstractFileEngine::ExtensionOption const\*'"/>
   <suppress-warning text="WARNING(MetaJavaBuilder) :: skipping * unmatched *type 'QAbstractFileEngine::Iterator\*'"/>
-  <suppress-warning text="WARNING(MetaJavaBuilder) :: visibility of function '*' modified in class '*'"/>
-  <suppress-warning text="WARNING(MetaJavaBuilder) :: hiding of function '*' in class '*'"/>
-  <suppress-warning text="WARNING(CppImplGenerator) :: protected function '*' in final class '*'"/>
   <suppress-warning text="WARNING(MetaJavaBuilder) :: skipping * unmatched *type 'QPointer&lt;*&gt;'"/>
   <suppress-warning text="WARNING(MetaJavaBuilder) :: skipping * unmatched *type 'QVector&lt;*&gt;'"/>
   <suppress-warning text="* private virtual function '*' in 'QAbstractListModel'"/>
@@ -2184,17 +2201,6 @@ public:
   <suppress-warning text="WARNING(MetaJavaBuilder) :: unhandled enum value: Qt::MatchWrap) in Qt::MatchFlag"/>
   <suppress-warning text="WARNING(MetaJavaBuilder) :: unmatched enum Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap) when parsing default value of 'match' in class 'QAbstractItemModel'"/>
   <suppress-warning text="WARNING(MetaJavaBuilder) :: unsupported default value 'QLatin1String(defaultConnection)' of argument in function '*', class '*'"/>
-  <suppress-warning text="WARNING(MetaJavaBuilder) :: Class '*' has equals operators but no qHash() function"/>
-  <suppress-warning text="WARNING(MetaJavaBuilder) :: type '*' is specified in typesystem, but not defined. This could potentially lead to compilation errors."/>
-  <suppress-warning text="WARNING(MetaJavaBuilder) :: namespace '*' for enum '*' is not declared"/>
-  <suppress-warning text="WARNING(MetaJavaBuilder) :: skipping function '*', unmatched parameter type '*'"/>
-  <suppress-warning text="WARNING(MetaJavaBuilder) :: skipping function '*', unmatched return type '*'"/>
-  <!-- <suppress-warning text="WARNING(MetaJavaBuilder) :: signature '*' for function modification in '*' not found. Possible candidates: "/>
-  -->
-  <suppress-warning text="WARNING(MetaJavaBuilder) :: namespace '*' does not have a type entry"/>
-  <suppress-warning text="WARNING(MetaJavaBuilder) :: unsupported default value '*' of argument in function '*', class '*'"/>
-  <suppress-warning text="WARNING(MetaJavaBuilder) :: Shadowing: * and *; Java code will not compile"/>
-  <suppress-warning text="WARNING(MetaJavaBuilder) :: enum '*' is specified in typesystem, but not declared"/>
 
   <!-- Qt 5 new classes -->
   <object-type name="QFileDevice"/>
@@ -2204,12 +2210,38 @@ public:
   <object-type name="QCommandLineOption"/>
   <object-type name="QCommandLineParser"/>
   <enum-type name="QCommandLineParser::OptionsAfterPositionalArgumentsMode"/>
+  <enum-type name="QCommandLineParser::MessageType" since-version="6.9"/>
   <object-type name="QIdentityProxyModel"/>
   <object-type name="QJsonArray"/>
   <object-type name="QJsonDocument"/>
   <object-type name="QJsonObject"/>
-  <object-type name="QJsonParseError"/>
-  <object-type name="QJsonValue"/>
+  <object-type name="QJsonParseError">
+    <!-- generator can't handle std::conditional_t introduced with Qt 6.10 -->
+    <inject-code class="pywrap-h" since-version="6.10" before-version="7">
+      void py_set_offset(QJsonParseError* theWrappedObject, int offset){
+        theWrappedObject->offset = offset;
+      }
+      int py_get_offset(QJsonParseError* theWrappedObject){
+        return theWrappedObject->offset;
+      }
+    </inject-code>
+    <inject-code class="pywrap-h" since-version="7">
+      void py_set_offset(QJsonParseError* theWrappedObject, qint64 offset){
+        theWrappedObject->offset = offset;
+      }
+      qint64 py_get_offset(QJsonParseError* theWrappedObject){
+        return theWrappedObject->offset;
+      }
+    </inject-code>
+  </object-type>
+  <object-type name="QJsonValue">
+    <!-- workaround to handle using declaration for an enum in another class -->
+    <!-- (currently not handled by the generator, handling needs to be added if this happens more often) -->
+    <inject-code class="pywrap-h" since-version="6.9">
+      public:
+      using JsonFormat = QJsonDocument::JsonFormat;
+    </inject-code>
+  </object-type>
   <object-type name="QFileSelector"/>
   <object-type name="QMarginsF"/>
   <object-type name="QLockFile"/>
@@ -2237,6 +2269,7 @@ public:
     <modify-function signature="operator()()" remove="all"/>
     <modify-function signature="operator()()const" remove="all"/>
   </object-type>
+  <rejection class="QLoggingCategory::UnregisteredInitialization" since-version="6.11"/>
 
 
   <!-- <object-type name="QAccessibleActionInterface"/> -->
@@ -2259,7 +2292,6 @@ public:
   <enum-type name="QProcess::InputChannelMode"/>
   <enum-type name="QByteArray::Base64Option" flags="QByteArray::Base64Options"/>
   <enum-type name="QByteArray::Base64DecodingStatus"/>
-  <enum-type name="QMetaType::Type"/>
   <enum-type name="QMetaType::TypeFlag" flags="QMetaType::TypeFlags"/>
   <enum-type name="QAbstractItemModel::CheckIndexOption"/>
   <enum-type name="QAbstractItemModel::LayoutChangeHint"/>
@@ -2284,6 +2316,7 @@ public:
   <enum-type name="Qt::TimerType"/>
   <enum-type name="Qt::Edge"/>
   <enum-type name="Qt::ColorScheme" since-version="6"/>
+  <enum-type name="Qt::ContrastPreference" since-version="6.11"/>
 
   <object-type name="QDeadlineTimer"/>
   <object-type name="QOperatingSystemVersionBase"/>
@@ -2306,4 +2339,6 @@ public:
   <enum-type name="Qt::ChecksumType"/>
   <enum-type name="Qt::SplitBehaviorFlags" flags="Qt::SplitBehavior"/>
   <enum-type name="Qt::HighDpiScaleFactorRoundingPolicy"/>
+  <enum-type name="Qt::ContextMenuTrigger"/>
+  <enum-type name="Qt::TimerId"/>
   </typesystem>

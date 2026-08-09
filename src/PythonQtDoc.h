@@ -1,5 +1,5 @@
 #ifndef _PYTHONQTDOC_H
-#define _PYTHONQTDOC_H
+  #define _PYTHONQTDOC_H
 
 /*
  *
@@ -132,12 +132,12 @@ Qt framework</a>.
  PythonQt supports:
  - Python 2 (>= Python 2.7)
  - Python 3 (>= Python 3.6)
- - Qt 4.x (Qt 4.7 and Qt 4.8 recommended) (not in the master branch, see below)
+ - Qt 4.x (Qt 4.7 and Qt 4.8 recommended) (not in the main branch, see below)
  - Qt 5.x (Tested with Qt 5.6, 5.11, 5.12 and 5.15)
  - Qt 6.x (Tested with Qt 6.5 - 6.7) - support may not be complete, support for optional modules may be added as needed
 
  The last working Qt4 version is available at svn branches/Qt4LastWorkingVersion or you can download the PythonQt 3.0 release.
- The current git master branch no longer supports Qt4, since we started to make use of some Qt5-only features.
+ The current git main branch no longer supports Qt4, since we started to make use of some Qt5-only features.
 
  \section Comparison Comparison with PySide
 
@@ -221,8 +221,8 @@ Qt framework</a>.
   -# \anchor qvariant QVariants are mapped recursively as given above, e.g. a dictionary can
   contain lists of dictionaries of doubles.
   -# \anchor pyobject PyObject is passed as direct pointer, which allows to pass/return any Python object directly to/from
-  a Qt slot that uses PyObject* as its argument/return value.  
-  
+  a Qt slot that uses PyObject* as its argument/return value.
+
   All Qt QVariant types are implemented, PythonQt supports the complete Qt API for these objects.
 
 
@@ -273,11 +273,11 @@ Qt framework</a>.
 
  \code
  class MySender(QtCore.QObject):
-   
+
    emitProgress = QtCore.Signal(float)  # this is actually a double argument in C++
-   
+
  class MyReceiver(QtCore.QObject):
-   
+
    @QtCore.Slot(float)
    def progress(self, value):
      print(f"progress: {value}")
@@ -572,7 +572,7 @@ the python2x.[lib | dll | so | dynlib].
  #include <QApplication>
  ...
 
- int main( int argc, char **argv )
+ int main(int argc, char *argv[])
  {
 
   QApplication qapp(argc, argv);

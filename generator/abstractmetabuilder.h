@@ -52,134 +52,137 @@
 class AbstractMetaBuilder
 {
 public:
-    enum RejectReason {
-        NotInTypeSystem,
-        GenerationDisabled,
-        RedefinedToNotClass,
-        UnmatchedArgumentType,
-        UnmatchedReturnType,
-        NoReason
-    };
+  enum RejectReason {
+    NotInTypeSystem,
+    GenerationDisabled,
+    RedefinedToNotClass,
+    UnmatchedArgumentType,
+    UnmatchedReturnType,
+    NoReason
+  };
 
-    AbstractMetaBuilder();
-    virtual ~AbstractMetaBuilder();
+  AbstractMetaBuilder();
+  virtual ~AbstractMetaBuilder();
 
-    AbstractMetaClassList classes() const { return m_meta_classes; }
-    AbstractMetaClassList classesTopologicalSorted() const;
+  AbstractMetaClassList classes() const { return m_meta_classes; }
+  AbstractMetaClassList classesTopologicalSorted() const;
 
-    FileModelItem model() const { return m_dom; }
-    void setModel(FileModelItem item) { m_dom = item; }
+  FileModelItem model() const { return m_dom; }
+  void setModel(FileModelItem item) { m_dom = item; }
 
+  ScopeModelItem popScope() { return m_scopes.takeLast(); }
+  void pushScope(ScopeModelItem item) { m_scopes << item; }
+  ScopeModelItem currentScope() const { return m_scopes.last(); }
 
-    ScopeModelItem popScope() { return m_scopes.takeLast(); }
-    void pushScope(ScopeModelItem item) { m_scopes << item; }
-    ScopeModelItem currentScope() const { return m_scopes.last(); }
+  QString fileName() const { return m_file_name; }
+  void setFileName(const QString& fileName) { m_file_name = fileName; }
 
-    QString fileName() const { return m_file_name; }
-    void setFileName(const QString &fileName) { m_file_name = fileName; }
+  //! Set list of include directories. This will be used to make absolute include paths relative.
+  void setIncludePaths(const QStringList& includePaths) { m_include_paths = includePaths; }
 
-    void dumpLog();
+  void dumpLog();
 
-    bool build();
+  bool build();
 
-    void autoAddQEnumsForClassItem(ClassModelItem item);
+  void autoAddQEnumsForClassItem(ClassModelItem item);
 
-    void addAbstractMetaClass(AbstractMetaClass *cls);
-    AbstractMetaClass *traverseTypeAlias(TypeAliasModelItem item);
-    AbstractMetaClass *traverseClass(ClassModelItem item);
-    bool setupInheritance(AbstractMetaClass *meta_class);
-    AbstractMetaClass *traverseNamespace(NamespaceModelItem item);
-    AbstractMetaEnum *traverseEnum(EnumModelItem item, AbstractMetaClass *enclosing, const QSet<QString> &enumsDeclarations);
-    void traverseEnums(ScopeModelItem item, AbstractMetaClass *parent, const QSet<QString> &enumsDeclarations);
-    void traverseFunctions(ScopeModelItem item, AbstractMetaClass *parent);
-    void traverseFields(ScopeModelItem item, AbstractMetaClass *parent);
-    void traverseStreamOperator(FunctionModelItem function_item);
-    void traverseCompareOperator(FunctionModelItem item);
-    void traverseArithmeticOperator(FunctionModelItem item);
-    
-    //! remove functions/methods that are overloads with equivalent parameter types
-    //! when called from Python
-    void removeEquivalentFunctions(AbstractMetaClass* parent);
+  void addAbstractMetaClass(AbstractMetaClass* cls);
+  AbstractMetaClass* traverseTypeAlias(TypeAliasModelItem item);
+  AbstractMetaClass* traverseClass(ClassModelItem item);
+  bool setupInheritance(AbstractMetaClass* meta_class);
+  AbstractMetaClass* traverseNamespace(NamespaceModelItem item);
+  AbstractMetaEnum* traverseEnum(EnumModelItem item, AbstractMetaClass* enclosing,
+    const QSet<QString>& enumsDeclarations);
+  void traverseEnums(ScopeModelItem item, AbstractMetaClass* parent, const QSet<QString>& enumsDeclarations);
+  void traverseFunctions(ScopeModelItem item, AbstractMetaClass* parent);
+  void traverseFields(ScopeModelItem item, AbstractMetaClass* parent);
+  void traverseStreamOperator(FunctionModelItem function_item);
+  void traverseCompareOperator(FunctionModelItem item);
+  void traverseArithmeticOperator(FunctionModelItem item);
 
-    AbstractMetaFunction *traverseFunction(FunctionModelItem function);
-    AbstractMetaField *traverseField(VariableModelItem field, const AbstractMetaClass *cls);
-    void checkFunctionModifications();
-    void registerHashFunction(FunctionModelItem function_item);
-    void registerToStringCapability(FunctionModelItem function_item);
+  //! remove functions/methods that are overloads with equivalent parameter types
+  //! when called from Python
+  void removeEquivalentFunctions(AbstractMetaClass* parent);
 
-    void parseQ_Property(AbstractMetaClass *meta_class, const QStringList &declarations);
-    void setupEquals(AbstractMetaClass *meta_class);
-    void setupComparable(AbstractMetaClass *meta_class);
-    void setupClonable(AbstractMetaClass *cls);
-    void setupFunctionDefaults(AbstractMetaFunction *meta_function, AbstractMetaClass *meta_class);
+  AbstractMetaFunction* traverseFunction(FunctionModelItem function);
+  AbstractMetaField* traverseField(VariableModelItem field, const AbstractMetaClass* cls);
+  void checkFunctionModifications();
+  void registerHashFunction(FunctionModelItem function_item);
+  void registerToStringCapability(FunctionModelItem function_item);
 
-    QString translateDefaultValue(ArgumentModelItem item, AbstractMetaType::shared_pointer type,
-                                               AbstractMetaFunction *fnc, AbstractMetaClass *,
-                                               int argument_index);
-    AbstractMetaType::shared_pointer translateType(const TypeInfo &type, bool *ok, bool resolveType = true, bool resolveScope = true);
+  void parseQ_Property(AbstractMetaClass* meta_class, const QStringList& declarations);
+  void setupEquals(AbstractMetaClass* meta_class);
+  void setupComparable(AbstractMetaClass* meta_class);
+  void setupClonable(AbstractMetaClass* cls);
+  void setupFunctionDefaults(AbstractMetaFunction* meta_function, AbstractMetaClass* meta_class);
 
-    void decideUsagePattern(AbstractMetaType::shared_pointer type);
+  QString translateDefaultValue(ArgumentModelItem item, AbstractMetaType::shared_pointer type,
+    AbstractMetaFunction* fnc, AbstractMetaClass*, int argument_index);
+  AbstractMetaType::shared_pointer translateType(const TypeInfo& type, bool* ok, bool resolveType = true,
+    bool resolveScope = true);
 
-    bool inheritTemplate(AbstractMetaClass *subclass,
-                         const AbstractMetaClass *template_class,
-                         const TypeParser::Info &info);
-    AbstractMetaType::shared_pointer inheritTemplateType(const QList<AbstractMetaType::shared_pointer> &template_types,
-                                                         AbstractMetaType::shared_pointer meta_type,
-                                                         bool *ok = 0);
+  void decideUsagePattern(AbstractMetaType::shared_pointer type);
 
-    bool isQObject(const QString &qualified_name);
-    bool isEnum(const QStringList &qualified_name);
+  bool inheritTemplate(AbstractMetaClass* subclass, const AbstractMetaClass* template_class,
+    const TypeParser::Info& info);
+  AbstractMetaType::shared_pointer inheritTemplateType(const QList<AbstractMetaType::shared_pointer>& template_types,
+    AbstractMetaType::shared_pointer meta_type, bool* ok = 0);
 
-    void fixQObjectForScope  (TypeDatabase *types, 
-                              NamespaceModelItem item);
+  bool isQObject(const QString& qualified_name);
+  bool isEnum(const QStringList& qualified_name);
 
-    // QtScript
-    QSet<QString> qtMetaTypeDeclaredTypeNames() const
-        { return m_qmetatype_declared_typenames; }
+  void fixQObjectForScope(TypeDatabase* types, NamespaceModelItem item);
+
+  // QtScript
+  QSet<QString> qtMetaTypeDeclaredTypeNames() const { return m_qmetatype_declared_typenames; }
 
 protected:
-    AbstractMetaClass *argumentToClass(ArgumentModelItem);
+  AbstractMetaClass* argumentToClass(ArgumentModelItem);
 
-    virtual AbstractMetaClass *createMetaClass() = 0;
-    virtual AbstractMetaEnum *createMetaEnum() = 0;
-    virtual AbstractMetaEnumValue *createMetaEnumValue() = 0;
-    virtual AbstractMetaField *createMetaField() = 0;
-    virtual AbstractMetaFunction *createMetaFunction() = 0;
-    virtual AbstractMetaArgument *createMetaArgument() = 0;
-    virtual AbstractMetaType::shared_pointer createMetaType() = 0;
+  virtual AbstractMetaClass* createMetaClass() = 0;
+  virtual AbstractMetaEnum* createMetaEnum() = 0;
+  virtual AbstractMetaEnumValue* createMetaEnumValue() = 0;
+  virtual AbstractMetaField* createMetaField() = 0;
+  virtual AbstractMetaFunction* createMetaFunction() = 0;
+  virtual AbstractMetaArgument* createMetaArgument() = 0;
+  virtual AbstractMetaType::shared_pointer createMetaType() = 0;
 
 private:
-    void sortLists();
+  void sortLists();
 
-    AbstractMetaClass* getGlobalNamespace(const TypeEntry* typeEntry);
+  AbstractMetaClass* getGlobalNamespace(const TypeEntry* typeEntry);
 
-    QString m_file_name;
+  // turn absolute file path into a relative include
+  Include getRelativeInclude(const QString& path);
 
-    AbstractMetaClassList m_meta_classes;
-    QHash<QString,AbstractMetaClass*> m_templates;
-    FileModelItem m_dom;
-    
-    QSet<const TypeEntry *> m_used_types;
+  QString m_file_name;
+  QStringList m_include_paths;
 
-    QMap<QString, RejectReason> m_rejected_classes;
-    QMap<QString, RejectReason> m_rejected_enums;
-    QMap<QString, RejectReason> m_rejected_functions;
-    QMap<QString, RejectReason> m_rejected_fields;
+  AbstractMetaClassList m_meta_classes;
+  QHash<QString, AbstractMetaClass*> m_templates;
+  FileModelItem m_dom;
 
-    QList<AbstractMetaEnum *> m_enums;
+  QSet<const TypeEntry*> m_used_types;
 
-    QList<QPair<AbstractMetaArgument *, AbstractMetaFunction *> > m_enum_default_arguments;
+  QMap<QString, RejectReason> m_rejected_classes;
+  QMap<QString, RejectReason> m_rejected_enums;
+  QMap<QString, RejectReason> m_rejected_functions;
+  QMap<QString, RejectReason> m_rejected_fields;
 
-    QHash<QString, AbstractMetaEnumValue *> m_enum_values;
+  QList<AbstractMetaEnum*> m_enums;
 
-    AbstractMetaClass *m_current_class;
-    QList<ScopeModelItem> m_scopes;
-    QString m_namespace_prefix;
+  QList<QPair<AbstractMetaArgument*, AbstractMetaFunction*>> m_enum_default_arguments;
 
-    QSet<AbstractMetaClass *> m_setup_inheritance_done;
+  QHash<QString, AbstractMetaEnumValue*> m_enum_values;
 
-    // QtScript
-    QSet<QString> m_qmetatype_declared_typenames;
+  AbstractMetaClass* m_current_class;
+  QList<ScopeModelItem> m_scopes;
+  QString m_namespace_prefix;
+
+  QSet<AbstractMetaClass*> m_setup_inheritance_done;
+
+  // QtScript
+  QSet<QString> m_qmetatype_declared_typenames;
 };
 
 #endif // ABSTRACTMETBUILDER_H

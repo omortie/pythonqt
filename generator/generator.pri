@@ -16,7 +16,7 @@ RESOURCES += generator.qrc
 
 include($$GENERATORPATH/parser/rxx.pri)
 
-include($$GENERATORPATH/parser/rpp/rpp.pri)
+include($$GENERATORPATH/simplecpp/simplecpp.pri)
 
 CONFIG += strict_c++
 win32-msvc*{
@@ -50,7 +50,7 @@ HEADERS += \
 
 
 
-      
+
 SOURCES += \
         $$GENERATORPATH/generator.cpp \
         $$GENERATORPATH/main.cpp \
@@ -67,13 +67,8 @@ SOURCES += \
         $$GENERATORPATH/prigenerator.cpp \
 
 
-   
-QT += core xml
 
-greaterThan(QT_MAJOR_VERSION, 5) {
-    QT += core5compat
-    message("WARNING: Qt module core5compat for XML handling in typesystem.cpp")
-}
+QT += core xml
 
 win32-msvc.net {
         QMAKE_CXXFLAGS += /Zm500

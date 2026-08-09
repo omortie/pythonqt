@@ -1,0 +1,17 @@
+diff --git a/generator/simplecpp/simplecpp.cpp b/generator/simplecpp/simplecpp.cpp
+index 84e4b54b..88cedd4e 100644
+--- a/generator/simplecpp/simplecpp.cpp
++++ b/generator/simplecpp/simplecpp.cpp
+@@ -3391,10 +3391,12 @@ void simplecpp::preprocess(simplecpp::TokenList &output, const simplecpp::TokenL
+                     err.msg = '#' + rawtok->str() + ' ' + err.msg;
+                     outputList->push_back(std::move(err));
+                 }
++/* Patched for PythonQt generator: Do not stop on #error directive:
+                 if (rawtok->str() == ERROR) {
+                     output.clear();
+                     return;
+                 }
++*/
+             }
+
+             if (rawtok->str() == DEFINE) {
