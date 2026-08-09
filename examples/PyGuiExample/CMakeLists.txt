@@ -11,7 +11,7 @@ set(RSRCS PyGuiExample.qrc)
 
 qt5_add_resources(W_RSRCS ${RSRCS})
 
-add_executable(PyGuiExample ${SRCS} ${MOC_HDRS} ${W_RSRCS})
+add_executable(PyGuiExample ${SRCS} ${W_RSRCS})
 target_link_libraries(PyGuiExample Qt5::Core Qt5::Widgets)
 target_link_libraries(PyGuiExample PythonQt-Qt5-Python)
 target_link_libraries(PyGuiExample PythonQt_QtAll-Qt5-Python)
