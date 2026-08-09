@@ -37,7 +37,7 @@ HEADERS +=                    \
   $$PWD/PythonQtQFileImporter.h     \
   $$PWD/PythonQtQFileImporter.h     \
   $$PWD/PythonQtVariants.h          \
-  $$PWD/gui/PythonQtScriptingConsole.h    \
+  $$PWD/PythonQtScriptingConsole.h    \
   $$PWD/PythonQtSystem.h \
   $$PWD/PythonQtUtils.h \
   $$PWD/PythonQtBoolResult.h \
@@ -63,7 +63,7 @@ SOURCES +=                    \
   $$PWD/PythonQtQFileImporter.cpp   \
   $$PWD/PythonQtClassWrapper.cpp    \
   $$PWD/PythonQtBoolResult.cpp      \
-  $$PWD/gui/PythonQtScriptingConsole.cpp \
+  $$PWD/PythonQtScriptingConsole.cpp \
   $$PWD/PythonQtThreadSupport.cpp \
 
 

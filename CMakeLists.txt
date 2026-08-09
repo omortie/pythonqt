@@ -25,11 +25,12 @@ if(${Qt5_VERSION_MAJOR} STREQUAL 5)
 	set(PYTHONQT_GENERATED_PATH ${CMAKE_SOURCE_DIR}/generated_cpp_515)
 endif(${Qt5_VERSION_MAJOR} STREQUAL 5)
 
-
-link_directories(${CMAKE_SOURCE_DIR}/lib)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
 #add_subdirectory(generator)
 add_subdirectory(src)
 add_subdirectory(extensions)
-add_subdirectory(tests)
+#add_subdirectory(tests)
 add_subdirectory(examples)

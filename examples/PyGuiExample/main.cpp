@@ -41,7 +41,7 @@
 
 #include "PythonQt.h"
 #include "PythonQt_QtAll.h"
-#include "gui/PythonQtScriptingConsole.h"
+#include "PythonQtScriptingConsole.h"
 
 #include <QApplication>
 #include <QWidget>

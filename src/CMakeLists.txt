@@ -9,15 +9,12 @@ project(PythonQt-Qt5-Python)
 	#set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Zc:strictStrings")
 #endif()
 
-#set(CMAKE_AUTOMOC ON)
-
 set(INCLUDE_PATH
 		${CMAKE_CURRENT_SOURCE_DIR}
-		${CMAKE_CURRENT_SOURCE_DIR}/gui/scriptdebugger/inc
+		${CMAKE_CURRENT_SOURCE_DIR}/gui
+		${CMAKE_CURRENT_SOURCE_DIR}/gui/scriptdebugger
 		${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_core
 		${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_core_builtin)
-
-link_directories(${PYTHON_PATH}/bin)
 
 set(SRCS
 		${CMAKE_CURRENT_SOURCE_DIR}/PythonQt.cpp
@@ -42,67 +39,23 @@ set(SRCS
 		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtStdDecorators.cpp
 		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtThreadSupport.cpp)
 
-set(HDRS
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQt.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtClassInfo.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtImporter.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtObjectPtr.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtProperty.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtSignal.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtSlot.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtSlotDecorator.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtStdIn.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtStdOut.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtMisc.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtMethodInfo.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtImportFileInterface.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtConversion.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtSignalReceiver.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtInstanceWrapper.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtClassWrapper.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtCppWrapperFactory.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtQFileImporter.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtQFileImporter.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtVariants.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtSystem.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtUtils.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtBoolResult.h
-		${CMAKE_CURRENT_SOURCE_DIR}/gui/PythonQtScriptingConsole.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtStdDecorators.h
-		${CMAKE_CURRENT_SOURCE_DIR}/PythonQtThreadSupport.h)
-
 # -------------------------------------Script Debugger----------------
-set(ScriptDebugger_SRCS gui/scriptdebugger/src/codeeditor.cpp
-		gui/scriptdebugger/src/scriptdebugger.cpp
-		gui/scriptdebugger/src/scripthighlighter.cpp)
+set(ScriptDebugger_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/gui/scriptdebugger/codeeditor.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/gui/scriptdebugger/scriptdebugger.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/gui/scriptdebugger/scripthighlighter.cpp)
 
-set(ScriptDebugger_HDRS gui/scriptdebugger/inc/codeeditor.h
-		gui/scriptdebugger/inc/scriptdebugger.h
-		gui/scriptdebugger/inc/scripthighlighter.h)
-
-set(ScriptDebugger_RES gui/scriptdebugger/res/scriptdebugger.qrc)
+set(ScriptDebugger_RES ${CMAKE_CURRENT_SOURCE_DIR}/gui/scriptdebugger/scriptdebugger.qrc)
 
 # -------------------------------------QtCore-------------------------
 set(CoreSRCS
 		${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_core_builtin/com_trolltech_qt_core_builtin_init.cpp
 		${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_core_builtin/com_trolltech_qt_core_builtin0.cpp)
-		   
-set(CoreHDRS
-		${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_core_builtin/com_trolltech_qt_core_builtin0.h)
+
 	
 # --------------------------------------QtGuiBuiltin----------------------
 set(GUISRCS
 		${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_gui_builtin/com_trolltech_qt_gui_builtin0.cpp
 		${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_gui_builtin/com_trolltech_qt_gui_builtin_init.cpp)
-
-set(GUIHDRS
-		${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_gui_builtin/com_trolltech_qt_gui_builtin0.h)
-	
-qt5_wrap_cpp(MOC_SRCS ${HDRS})
-qt5_wrap_cpp(MOC_CoreSRCS ${CoreHDRS})
-qt5_wrap_cpp(MOC_GUISRCS ${GUIHDRS})
-qt5_wrap_cpp(MOC_ScriptDebugger_SRCS ${ScriptDebugger_HDRS})
-qt5_add_resources(WScriptDebugger_RES ${ScriptDebugger_RES})
 
 set(TARGET_NAME PythonQt-Qt5-Python)
 	
@@ -112,12 +65,13 @@ else(PYTHONQT_STATIC)
 	set(LIBRARY_TYPE SHARED)
 endif(PYTHONQT_STATIC)
 
-add_library(PythonQt-Qt5-Python ${LIBRARY_TYPE} ${SRCS} ${MOC_SRCS}
-		${ScriptDebugger_SRCS} ${MOC_ScriptDebugger_SRCS} ${WScriptDebugger_RES}
-		${CoreSRCS} ${MOC_CoreSRCS}
-		${GUISRCS} ${MOC_GUISRCS} ${WScriptDebugger_RES})
-target_link_libraries(PythonQt-Qt5-Python Qt5::CorePrivate Qt5::Widgets)
-target_link_libraries(PythonQt-Qt5-Python python${PYTHON_VERSION_USEFUL})
+add_library(PythonQt-Qt5-Python ${LIBRARY_TYPE} ${SRCS}
+		${ScriptDebugger_SRCS}
+		${CoreSRCS}
+		${GUISRCS})
+target_link_libraries(PythonQt-Qt5-Python PUBLIC Qt5::CorePrivate Qt5::Widgets)
+target_link_directories(PythonQt-Qt5-Python PUBLIC ${PYTHON_PATH}/bin)
+target_link_libraries(PythonQt-Qt5-Python PUBLIC python${PYTHON_VERSION_USEFUL})
 target_include_directories(PythonQt-Qt5-Python PUBLIC ${INCLUDE_PATH})
 if(${LIBRARY_TYPE} STREQUAL SHARED)
 	set(OUTPUT_TYPE RUNTIME)

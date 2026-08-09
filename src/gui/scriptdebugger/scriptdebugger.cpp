@@ -6,7 +6,7 @@
 #include "scripthighlighter.h"
 #include "codeeditor.h"
 
-#include "gui/PythonQtScriptingConsole.h"
+#include "PythonQtScriptingConsole.h"
 
 ScriptDebugger::ScriptDebugger(PythonQtObjectPtr *pythonengine,QWidget *parent) :QWidget(parent), mainpyengine(pythonengine), textEdit(new CodeEditor(*pythonengine,this))
 {
@@ -177,21 +177,21 @@ void ScriptDebugger::showVariable(QString info)
 void ScriptDebugger::createToolbar()
 {	
     toolbar = new QToolBar(tr("toolbar"));
-    const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(":/icons/scriptdebugger/new.png"));
+    const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(":/icons/new.png"));
     QAction *newAct = new QAction(newIcon, tr("&New"), this);
     newAct->setShortcuts(QKeySequence::New);
     newAct->setStatusTip(tr("Create a new file"));
     connect(newAct, &QAction::triggered, this, &ScriptDebugger::newFile);
     toolbar->addAction(newAct);
 
-    const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/icons/scriptdebugger/open.png"));
+    const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/icons/open.png"));
     QAction *openAct = new QAction(openIcon, tr("&Open..."), this);
     openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open an existing file"));
     connect(openAct, &QAction::triggered, this, &ScriptDebugger::open);
     toolbar->addAction(openAct);
 
-    const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/icons/scriptdebugger/save.png"));
+    const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/icons/save.png"));
     QAction *saveAct = new QAction(saveIcon, tr("&Save"), this);
     saveAct->setShortcuts(QKeySequence::Save);
     saveAct->setStatusTip(tr("Save the document to disk"));
@@ -201,7 +201,7 @@ void ScriptDebugger::createToolbar()
 #ifndef QT_NO_CLIPBOARD
     toolbar->addSeparator();
 
-    const QIcon cutIcon = QIcon::fromTheme("edit-cut", QIcon(":/icons/scriptdebugger/cut.png"));
+    const QIcon cutIcon = QIcon::fromTheme("edit-cut", QIcon(":/icons/cut.png"));
     QAction *cutAct = new QAction(cutIcon, tr("Cu&t"), this);
     cutAct->setShortcuts(QKeySequence::Cut);
     cutAct->setStatusTip(tr("Cut the current selection's contents to the "
@@ -209,7 +209,7 @@ void ScriptDebugger::createToolbar()
     connect(cutAct, &QAction::triggered, textEdit, &QPlainTextEdit::cut);
     toolbar->addAction(cutAct);
 
-    const QIcon copyIcon = QIcon::fromTheme("edit-copy", QIcon(":/icons/scriptdebugger/copy.png"));
+    const QIcon copyIcon = QIcon::fromTheme("edit-copy", QIcon(":/icons/copy.png"));
     QAction *copyAct = new QAction(copyIcon, tr("&Copy"), this);
     copyAct->setShortcuts(QKeySequence::Copy);
     copyAct->setStatusTip(tr("Copy the current selection's contents to the "
@@ -217,7 +217,7 @@ void ScriptDebugger::createToolbar()
     connect(copyAct, &QAction::triggered, textEdit, &QPlainTextEdit::copy);
     toolbar->addAction(copyAct);
 
-    const QIcon pasteIcon = QIcon::fromTheme("edit-paste", QIcon(":/icons/scriptdebugger/paste.png"));
+    const QIcon pasteIcon = QIcon::fromTheme("edit-paste", QIcon(":/icons/paste.png"));
     QAction *pasteAct = new QAction(pasteIcon, tr("&Paste"), this);
     pasteAct->setShortcuts(QKeySequence::Paste);
     pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current "
@@ -227,14 +227,14 @@ void ScriptDebugger::createToolbar()
 
     toolbar->addSeparator();
 
-    const QIcon maxifyFont = QIcon::fromTheme("font-minify", QIcon(":/icons/scriptdebugger/zoomi_32.png"));
+    const QIcon maxifyFont = QIcon::fromTheme("font-minify", QIcon(":/icons/zoomi_32.png"));
     QAction *maxifyFontAct = new QAction(maxifyFont, tr("Zoom &In"), this);
     maxifyFontAct->setShortcuts(QKeySequence::ZoomIn);
     maxifyFontAct->setStatusTip(tr("Zoom in the editor"));
     connect(maxifyFontAct,&QAction::triggered,this,&ScriptDebugger::maxifyFont);
     toolbar->addAction(maxifyFontAct);
 
-    const QIcon minifyIcon = QIcon::fromTheme("font-minify", QIcon(":/icons/scriptdebugger/zoomo_32.png"));
+    const QIcon minifyIcon = QIcon::fromTheme("font-minify", QIcon(":/icons/zoomo_32.png"));
     QAction *minifyFontAct = new QAction(minifyIcon, tr("Zoom &Out"), this);
     minifyFontAct->setShortcuts(QKeySequence::ZoomOut);
     minifyFontAct->setStatusTip(tr("Zoom out the editor"));
@@ -243,7 +243,7 @@ void ScriptDebugger::createToolbar()
 
     toolbar->addSeparator();
 
-    const QIcon runIcon = QIcon::fromTheme("run-script", QIcon(":/icons/scriptdebugger/run.png"));
+    const QIcon runIcon = QIcon::fromTheme("run-script", QIcon(":/icons/run.png"));
     QAction *runAct = new QAction(runIcon, tr("&Run"), this);
     runAct->setStatusTip(tr("Run Script"));
     connect(runAct, &QAction::triggered, this, &ScriptDebugger::run);
@@ -251,31 +251,31 @@ void ScriptDebugger::createToolbar()
 
     toolbar->addSeparator();
 
-    const QIcon debugIcon = QIcon::fromTheme("debug-script", QIcon(":/icons/scriptdebugger/debug.png"));
+    const QIcon debugIcon = QIcon::fromTheme("debug-script", QIcon(":/icons/debug.png"));
     QAction *debugAct = new QAction(debugIcon, tr("&Debug"), this);
     debugAct->setStatusTip(tr("Debug Script"));
     connect(debugAct, &QAction::triggered, this, &ScriptDebugger::debug);
     toolbar->addAction(debugAct);
 
-    const QIcon continueIcon = QIcon::fromTheme("continue-script", QIcon(":/icons/scriptdebugger/debugger_continue.png"));
+    const QIcon continueIcon = QIcon::fromTheme("continue-script", QIcon(":/icons/debugger_continue.png"));
     QAction *continueAct = new QAction(continueIcon, tr("Continue"), this);
     continueAct->setStatusTip(tr("Contiue"));
     connect(continueAct, &QAction::triggered, this, &ScriptDebugger::_continue);
     toolbar->addAction(continueAct);
 
-    const QIcon stopIcon = QIcon::fromTheme("stop-script", QIcon(":/icons/scriptdebugger/debugger_stop.png"));
+    const QIcon stopIcon = QIcon::fromTheme("stop-script", QIcon(":/icons/debugger_stop.png"));
     QAction *stopAct = new QAction(stopIcon, tr("&Stop"), this);
     stopAct->setStatusTip(tr("Stop"));
     connect(stopAct, &QAction::triggered, this, &ScriptDebugger::_stop);
     toolbar->addAction(stopAct);
 
-    const QIcon stepOverIcon = QIcon::fromTheme("stepOver-script", QIcon(":/icons/scriptdebugger/stepover.png"));
+    const QIcon stepOverIcon = QIcon::fromTheme("stepOver-script", QIcon(":/icons/stepover.png"));
     QAction *stepOverAct = new QAction(stepOverIcon, tr("&Step Over"), this);
     stepOverAct->setStatusTip(tr("StepOver"));
     connect(stepOverAct, &QAction::triggered, this, &ScriptDebugger::_stepOver);
     toolbar->addAction(stepOverAct);
 
-    const QIcon stepIntoIcon = QIcon::fromTheme("stepInto-script", QIcon(":/icons/scriptdebugger/stepinto.png"));
+    const QIcon stepIntoIcon = QIcon::fromTheme("stepInto-script", QIcon(":/icons/stepinto.png"));
     QAction *stepIntoAct = new QAction(stepIntoIcon, tr("&Step In"), this);
     stepIntoAct->setStatusTip(tr("StepIn"));
     connect(stepIntoAct, &QAction::triggered, this, &ScriptDebugger::_stepInto);
@@ -283,7 +283,7 @@ void ScriptDebugger::createToolbar()
 
     toolbar->addSeparator();
 
-    const QIcon profilerIcon = QIcon::fromTheme("profile-code", QIcon(":icons/scriptdebugger/profiler.png"));
+    const QIcon profilerIcon = QIcon::fromTheme("profile-code", QIcon(":icons/profiler.png"));
     QAction *profilerAct = new QAction(profilerIcon, tr("&Profile Code"), this);
     profilerAct->setStatusTip(tr("Profiler Code"));
     connect(profilerAct, &QAction::triggered, this, &ScriptDebugger::_profileCode);
@@ -291,7 +291,7 @@ void ScriptDebugger::createToolbar()
 
     toolbar->addSeparator();
 
-    const QIcon clearIcon = QIcon::fromTheme("clear-console", QIcon(":/icons/scriptdebugger/clear.png"));
+    const QIcon clearIcon = QIcon::fromTheme("clear-console", QIcon(":/icons/clear.png"));
     QAction *clearAct = new QAction(clearIcon, tr("&Clear Console"), this);
     clearAct->setStatusTip(tr("Clear Console"));
     connect(clearAct, &QAction::triggered, this, &ScriptDebugger::clearConsole);

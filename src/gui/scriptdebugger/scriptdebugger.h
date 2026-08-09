@@ -47,7 +47,7 @@ public:
         script(QString("")),
         isrun(false){
         engine=pyengine;
-        engine->evalFile(":scripts/scriptdebugger/debugger.py");
+        engine->evalFile(":scripts/debugger.py");
     }
     void setScript(QString _script){
         script=_script;
