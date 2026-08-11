@@ -9,9 +9,7 @@ find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 set(SRCS main.cpp)
 set(RSRCS PyGettingStarted.qrc)
 
-qt5_add_resources(W_RSRCS ${RSRCS})
-
-add_executable(PyGettingStarted ${SRCS} ${W_RSRCS})
+add_executable(PyGettingStarted ${SRCS} ${RSRCS})
 target_link_libraries(PyGettingStarted Qt5::Core Qt5::Widgets)
 target_link_libraries(PyGettingStarted PythonQt-Qt5-Python)
 set_target_properties(PyGettingStarted PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)

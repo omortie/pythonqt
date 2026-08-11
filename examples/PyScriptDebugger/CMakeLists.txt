@@ -9,9 +9,7 @@ find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 set(SRCS main.cpp)
 set(RSRCS PyScriptDebugger.qrc)
 
-qt5_add_resources(W_RSRCS ${RSRCS})
-
-add_executable(PyScriptDebugger ${SRCS} ${W_RSRCS})
+add_executable(PyScriptDebugger ${SRCS} ${RSRCS})
 target_link_libraries(PyScriptDebugger Qt5::Core Qt5::Widgets)
 target_link_libraries(PyScriptDebugger PythonQt-Qt5-Python)
 target_link_libraries(PyScriptDebugger PythonQt_QtAll-Qt5-Python)

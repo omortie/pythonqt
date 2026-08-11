@@ -10,10 +10,7 @@ set(SRCS main.cpp PyExampleDecorators.cpp)
 set(HDRS PyExampleDecorators.h)
 set(RSRCS PyDecoratorsExample.qrc)
 
-qt5_wrap_cpp(MOC_SRCS ${SRCS})
-qt5_add_resources(W_RSRCS ${RSRCS})
-
-add_executable(PyDecoratorsExample ${SRCS} ${MOC_SRCS} ${W_RSRCS})
+add_executable(PyDecoratorsExample ${SRCS} ${RSRCS})
 target_link_libraries(PyDecoratorsExample Qt5::Core Qt5::Widgets)
 target_link_libraries(PyDecoratorsExample PythonQt-Qt5-Python)
 set_target_properties(PyDecoratorsExample PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)

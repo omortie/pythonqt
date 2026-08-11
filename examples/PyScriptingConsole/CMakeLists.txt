@@ -9,10 +9,7 @@ find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 set(SRCS main.cpp PyExampleObject.cpp)
 set(RSRCS PyScriptingConsole.qrc)
 
-qt5_wrap_cpp(MOC_SRCS ${SRCS})
-qt5_add_resources(W_RSRCS ${RSRCS})
-
-add_executable(PyScriptingConsole ${SRCS} ${MOC_SRCS} ${W_RSRCS})
+add_executable(PyScriptingConsole ${SRCS} ${RSRCS})
 target_link_libraries(PyScriptingConsole Qt5::Core Qt5::Widgets)
 target_link_libraries(PyScriptingConsole PythonQt-Qt5-Python)
 target_link_libraries(PyScriptingConsole PythonQt_QtAll-Qt5-Python)

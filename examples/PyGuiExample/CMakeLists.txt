@@ -9,9 +9,7 @@ find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 set(SRCS main.cpp)
 set(RSRCS PyGuiExample.qrc)
 
-qt5_add_resources(W_RSRCS ${RSRCS})
-
-add_executable(PyGuiExample ${SRCS} ${W_RSRCS})
+add_executable(PyGuiExample ${SRCS} ${RSRCS})
 target_link_libraries(PyGuiExample Qt5::Core Qt5::Widgets)
 target_link_libraries(PyGuiExample PythonQt-Qt5-Python)
 target_link_libraries(PyGuiExample PythonQt_QtAll-Qt5-Python)
