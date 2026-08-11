@@ -40,7 +40,7 @@
 //----------------------------------------------------------------------------------
 
 #include "PythonQt.h"
-#include "gui/PythonQtScriptingConsole.h"
+#include "PythonQtScriptingConsole.h"
 #include "CustomObject.h"
 
 #include <QApplication>

@@ -150,7 +150,7 @@
 #define QT_DECL_METATYPE_EXTERN_TAGGED(TYPE, TAG, EXPORT)
 
 #include <QtCore/QtCore>
-#include <QtGui/QtGui>
+#include <QtQtGui>
 #include <QtNetwork/QtNetwork>
 #include <QtSql/QtSql>
 #include <QtSvg/QtSvg>

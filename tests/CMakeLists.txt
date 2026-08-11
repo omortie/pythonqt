@@ -6,18 +6,13 @@
 project(PythonQtTest)
 find_package(Qt5 REQUIRED COMPONENTS Core OpenGL Widgets Test)
 
-set(INCLUDE_PATH ${CMAKE_SOURCE_DIR}/src)
-include_directories(${INCLUDE_PATH})
 link_directories(${PYTHON_PATH}/bin)
 
-set(TestSRCS PythonQtTestMain.cpp PythonQtTests.cpp)
-set(TestHDRS PythonQtTests.h)
+set(TestSRCS PythonQtTestMain.cpp PythonQtTests.cpp PythonQtTestCleanup.cpp)
 
-qt5_wrap_cpp(MOC_TestHDRS ${TestHDRS})
-
-add_executable(PythonQtTest ${TestSRCS} ${MOC_TestHDRS})
+add_executable(PythonQtTest ${TestSRCS})
 target_link_libraries(PythonQtTest Qt5::Core Qt5::OpenGL Qt5::Widgets Qt5::Test)
-target_link_libraries(PythonQtTest PythonQt-Qt5-Python${PYTHON_VERSION}${BUILD_POSTFIX}3)
-target_link_libraries(PythonQtTest python${PYTHON_VERSION_USEFUL})
+target_link_libraries(PythonQtTest PythonQt-Qt5-Python)
+target_link_libraries(PythonQtTest PythonQt_QtAll-Qt5-Python)
 set_target_properties(PythonQtTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set_target_properties(PythonQtTest PROPERTIES OUTPUT_NAME PythonQtTest${BUILD_POSTFIX})

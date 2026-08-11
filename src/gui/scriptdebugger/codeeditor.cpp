@@ -429,8 +429,8 @@ void BreakArea::paintEvent(QPaintEvent *e)
     BreakData *bData; // the BreakData to store breakpoint status data saved in the block
     QPainter painter(this); // our tiny-beauty painter
     // looping over the whole text to see which blocks are set as breakpoints to paint a nice simple circle beside them in breakpoint area
-    QPixmap breakpoint(":icons/scriptdebugger/breakpoint.png");
-    QPixmap activeLine(":icons/scriptdebugger/forwd_32.png");
+    QPixmap breakpoint(":icons/breakpoint.png");
+    QPixmap activeLine(":icons/forwd_32.png");
     for (int i = 0 ; i < editor->document()->lineCount() ; i++){
         // finding block's information
         block = editor->document()->findBlockByLineNumber(i);

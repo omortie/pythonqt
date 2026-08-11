@@ -43,7 +43,7 @@
 #include "PythonQt_QtAll.h"
 
 #include "PyExampleObject.h"
-#include "gui/PythonQtScriptingConsole.h"
+#include "PythonQtScriptingConsole.h"
 
 #include <QApplication>
 #include <QWidget>

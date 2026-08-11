@@ -1,7 +1,7 @@
 #include <QApplication>
 #include "PythonQt.h"
 #include "PythonQt_QtAll.h"
-#include "gui/scriptdebugger/inc/scriptdebugger.h"
+#include "scriptdebugger.h"
 
 int main(int argc, char *argv[])
 {

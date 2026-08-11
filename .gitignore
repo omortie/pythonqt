@@ -114,3 +114,4 @@ generator/release
 */.vs
 */debug/*
 */release/*
+bin/
