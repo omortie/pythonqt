@@ -35,7 +35,7 @@ set(PYTHONQTALL_HDRS PythonQt_QtAll.h)
 
 file (GLOB PythonQt_Core_SRCS ${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_core/*.cpp)
 
-file (GLOB PythonQt_GUI_SRCS ${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_gui/*.cpp)
+file (GLOB PythonQt_GUI_SRCS ${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_*.cpp)
 
 file (GLOB PythonQt_Multimedia_SRCS ${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_multimedia/*.cpp)
 
