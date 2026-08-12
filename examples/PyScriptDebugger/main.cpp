@@ -6,7 +6,6 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-   // Q_INIT_RESOURCE(scriptdebugger);
     PythonQt::init();
     PythonQt_QtAll::init();
     PythonQtObjectPtr *mainModule = new PythonQtObjectPtr(PythonQt::self()->getMainModule());

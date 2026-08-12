@@ -1,23 +1,23 @@
 <RCC>
     <qresource prefix="/">
-        <file>icons/copy.png</file>
-        <file>icons/cut.png</file>
-        <file>icons/new.png</file>
-        <file>icons/open.png</file>
-        <file>icons/paste.png</file>
-        <file>icons/save.png</file>
-        <file>icons/debug.png</file>
-        <file>icons/run.png</file>
-        <file>icons/stepover.png</file>
-        <file>icons/clear.png</file>
-        <file>scripts/debugger.py</file>
-        <file>icons/zoomi_32.png</file>
-        <file>icons/zoomo_32.png</file>
-        <file>icons/debugger_continue.png</file>
-        <file>icons/debugger_stop.png</file>
-        <file>icons/stepinto.png</file>
-        <file>icons/breakpoint.png</file>
-        <file>icons/forwd_32.png</file>
-        <file>icons/profiler.png</file>
+        <file>res/icons/copy.png</file>
+        <file>res/icons/cut.png</file>
+        <file>res/icons/new.png</file>
+        <file>res/icons/open.png</file>
+        <file>res/icons/paste.png</file>
+        <file>res/icons/save.png</file>
+        <file>res/icons/debug.png</file>
+        <file>res/icons/run.png</file>
+        <file>res/icons/stepover.png</file>
+        <file>res/icons/clear.png</file>
+        <file>res/icons/zoomi_32.png</file>
+        <file>res/icons/zoomo_32.png</file>
+        <file>res/icons/debugger_continue.png</file>
+        <file>res/icons/debugger_stop.png</file>
+        <file>res/icons/stepinto.png</file>
+        <file>res/icons/breakpoint.png</file>
+        <file>res/icons/forwd_32.png</file>
+        <file>res/icons/profiler.png</file>
+        <file>res/scripts/debugger.py</file>
     </qresource>
 </RCC>

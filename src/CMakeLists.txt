@@ -14,7 +14,8 @@ set(INCLUDE_PATH
 		${CMAKE_CURRENT_SOURCE_DIR}/gui
 		${CMAKE_CURRENT_SOURCE_DIR}/gui/scriptdebugger
 		${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_core
-		${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_core_builtin)
+		${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_core_builtin
+		${ScriptDebugger_INC})
 
 set(SRCS
 		${CMAKE_CURRENT_SOURCE_DIR}/PythonQt.cpp
@@ -67,6 +68,7 @@ endif(PYTHONQT_STATIC)
 
 add_library(PythonQt-Qt5-Python ${LIBRARY_TYPE} ${SRCS}
 		${ScriptDebugger_SRCS}
+		${ScriptDebugger_RES}
 		${CoreSRCS}
 		${GUISRCS})
 target_link_libraries(PythonQt-Qt5-Python PUBLIC Qt5::CorePrivate Qt5::Widgets)
