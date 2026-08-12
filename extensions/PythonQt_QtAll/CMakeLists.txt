@@ -35,7 +35,7 @@ set(PYTHONQTALL_HDRS PythonQt_QtAll.h)
 
 file (GLOB PythonQt_Core_SRCS ${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_core/*.cpp)
 
-file (GLOB PythonQt_GUI_SRCS ${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_*.cpp)
+file (GLOB PythonQt_GUI_SRCS ${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_gui/*.cpp)
 
 file (GLOB PythonQt_Multimedia_SRCS ${PYTHONQT_GENERATED_PATH}/com_trolltech_qt_multimedia/*.cpp)
 
@@ -86,6 +86,7 @@ Qt5::Quick Qt5::Qml Qt5::QuickWidgets Qt5::UiTools)
 target_link_directories(PythonQt_QtAll-Qt5-Python PUBLIC ${CMAKE_SOURCE_DIR}/lib)
 target_link_libraries(PythonQt_QtAll-Qt5-Python PUBLIC PythonQt-Qt5-Python)
 target_include_directories(PythonQt_QtAll-Qt5-Python PUBLIC ${INCLUDE_PATH})
+target_compile_definitions(PythonQt_QtAll-Qt5-Python PUBLIC PYTHONQT_WITH_GUI)
 
 if(${LIBRARY_TYPE} STREQUAL SHARED)
 	set(OUTPUT_TYPE RUNTIME)
